@@ -1,1 +1,288 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101629">
+<title>Oswaldo Exchange</title>
+<style>
+:root {
+  --bg:#0b1020;
+  --panel:#151d32;
+  --border:#293550;
+  --text:#f4f7ff;
+  --muted:#9eacc5;
+  --accent:#68edc2;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(ellipse at top,#1a2944,var(--bg) 65%);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+header {
+  padding:22px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.logo {
+  width:45px;height:45px;
+  display:grid;place-items:center;
+  background:var(--accent);
+  color:#101629;border-radius:14px;
+  font-size:25px;font-weight:900;
+}
+.brand {font-size:18px;font-weight:800;letter-spacing:.5px}
+.sub {color:var(--muted);font-size:12px;margin-top:5px}
+main {width:min(100% - 28px,520px);margin:28px auto}
+h1 {font-size:29px;margin:0 0 10px}
+.intro {color:var(--muted);line-height:1.6;font-size:14px}
+.card {
+  background:rgba(21,29,50,.96);
+  border:1px solid var(--border);
+  border-radius:22px;padding:21px;
+  margin-top:22px;
+  box-shadow:0 15px 45px #0003;
+}
+.label {font-size:12px;color:var(--muted);display:block;margin-bottom:9px}
+input,select {
+  width:100%;padding:15px;
+  background:#0c1325;color:var(--text);
+  border:1px solid var(--border);
+  border-radius:12px;font-size:16px;
+  outline:none;
+}
+input:focus,select:focus {border-color:var(--accent)}
+.field {margin-bottom:18px}
+.swap {text-align:center;margin:-6px 0 14px}
+.swap button {
+  background:#26334b;color:var(--accent);
+  border:1px solid var(--border);
+  border-radius:50%;width:43px;height:43px;
+  font-size:21px;cursor:pointer;
+}
+.primary {
+  width:100%;padding:16px;
+  border:0;border-radius:12px;
+  background:var(--accent);color:#0b1820;
+  font-size:16px;font-weight:800;cursor:pointer;
+}
+.result {
+  margin-top:18px;padding:18px;
+  background:#0c1325;border-radius:14px;
+  border:1px solid var(--border);
+}
+.result-label {font-size:12px;color:var(--muted)}
+#result {font-size:29px;font-weight:800;overflow-wrap:anywhere;margin:10px 0}
+#rate {font-size:12px;color:var(--muted);line-height:1.6}
+.note {font-size:12px;color:var(--muted);line-height:1.6;margin-top:15px}
+.section-title {font-size:16px;font-weight:700}
+.rate-row {display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);font-size:13px}
+.rate-row:last-child {border:0}
+.rate-row span:last-child {color:var(--accent);text-align:right}
+footer {text-align:center;color:var(--muted);font-size:12px;padding:25px 18px 35px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">O</div>
+  <div>
+    <div class="brand">OSWALDO EXCHANGE</div>
+    <div class="sub">SIMPLE · SMART · GLOBAL</div>
+  </div>
+</header>
+
+<main>
+  <h1>Currency Converter</h1>
+  <p class="intro">Convert currencies in seconds. Select your currencies and enter an amount to calculate an estimated value.</p>
+
+  <section class="card">
+    <div class="field">
+      <label class="label" for="amount">YOU SEND</label>
+      <input id="amount" type="number" min="0" step="any" value="1" inputmode="decimal">
+    </div>
+
+    <div class="field">
+      <label class="label" for="from">FROM CURRENCY</label>
+      <select id="from"></select>
+    </div>
+
+    <div class="swap">
+      <button id="swap" type="button" aria-label="Swap currencies">⇅</button>
+    </div>
+
+    <div class="field">
+      <label class="label" for="to">TO CURRENCY</label>
+      <select id="to"></select>
+    </div>
+
+    <button class="primary" id="convert" type="button">Convert Currency →</button>
+
+    <div class="result" aria-live="polite">
+      <div class="result-label">ESTIMATED CONVERSION</div>
+      <div id="result">Loading...</div>
+      <div id="rate"></div>
+    </div>
+    <p class="note">This is an estimate, not a transaction or a guaranteed exchange quote. Rates may be delayed or unavailable. Bank rates, market rates, and actual exchange offers may differ.</p>
+  </section>
+
+  <section class="card">
+    <div class="section-title">Popular currencies</div>
+    <div id="popular"></div>
+    <p class="note" id="updated">Rates have not been loaded yet.</p>
+  </section>
+</main>
+
+<footer>
+  © <span id="year"></span> Oswaldo Exchange<br>
+  Currency information only · No money transfers
+</footer>
+
+<script>
+const currencies = {
+  USD:"US Dollar",
+  MMK:"Myanmar Kyat",
+  THB:"Thai Baht",
+  EUR:"Euro",
+  SGD:"Singapore Dollar",
+  MYR:"Malaysian Ringgit",
+  INR:"Indian Rupee",
+  GBP:"British Pound",
+  JPY:"Japanese Yen",
+  CNY:"Chinese Yuan",
+  KRW:"South Korean Won",
+  AUD:"Australian Dollar",
+  CAD:"Canadian Dollar",
+  IDR:"Indonesian Rupiah",
+  PHP:"Philippine Peso",
+  VND:"Vietnamese Dong"
+};
+
+const from = document.getElementById("from");
+const to = document.getElementById("to");
+const amount = document.getElementById("amount");
+const result = document.getElementById("result");
+const rateText = document.getElementById("rate");
+const popular = document.getElementById("popular");
+const updated = document.getElementById("updated");
+
+let rates = { USD:1 };
+let rateDate = "";
+let source = "USD reference rates";
+
+for (const [code,name] of Object.entries(currencies)) {
+  from.add(new Option(`${code} — ${name}`,code));
+  to.add(new Option(`${code} — ${name}`,code));
+}
+from.value = "USD";
+to.value = "MMK";
+document.getElementById("year").textContent = new Date().getFullYear();
+
+function formatNumber(value, code) {
+  return new Intl.NumberFormat("en-US",{
+    maximumFractionDigits: code === "MMK" || code === "IDR" ||
+      code === "VND" || code === "KRW" ? 2 : 4
+  }).format(value);
+}
+
+function renderPopular() {
+  const list = ["USD","MMK","THB","EUR","SGD","MYR"];
+  popular.replaceChildren();
+  for (const code of list) {
+    const row = document.createElement("div");
+    row.className = "rate-row";
+    const left = document.createElement("span");
+    left.textContent = `${code} · ${currencies[code]}`;
+    const right = document.createElement("span");
+    right.textContent = rates[code] !== undefined
+      ? `1 USD = ${formatNumber(rates[code],code)} ${code}`
+      : "Rate unavailable";
+    row.append(left,right);
+    popular.append(row);
+  }
+}
+
+function convert() {
+  const value = Number(amount.value);
+  const a = from.value;
+  const b = to.value;
+
+  if (amount.value.trim() === "" || !Number.isFinite(value) || value < 0) {
+    result.textContent = "Enter a valid amount";
+    rateText.textContent = "";
+    return;
+  }
+  if (rates[a] === undefined || rates[b] === undefined ||
+      rates[a] <= 0 || rates[b] <= 0) {
+    result.textContent = "Rate unavailable";
+    rateText.textContent = "Connect to the internet and try refreshing the rates.";
+    return;
+  }
+
+  const converted = value / rates[a] * rates[b];
+  result.textContent = `${formatNumber(converted,b)} ${b}`;
+  rateText.textContent =
+    `1 ${a} = ${formatNumber(rates[b]/rates[a],b)} ${b}` +
+    (rateDate ? ` · Rate date: ${rateDate}` : "") +
+    ` · Source: ${source}`;
+}
+
+async function loadRates() {
+  updated.textContent = "Loading reference rates...";
+  try {
+    const response = await fetch("https://open.er-api.com/v6/latest/USD");
+    if (!response.ok) throw new Error("Rate service unavailable");
+    const data = await response.json();
+    if (data.result !== "success" || !data.rates) {
+      throw new Error("Invalid rate data");
+    }
+
+    const nextRates = {};
+    for (const code of Object.keys(currencies)) {
+      if (Number.isFinite(data.rates[code]) && data.rates[code] > 0) {
+        nextRates[code] = data.rates[code];
+      }
+    }
+    if (nextRates.USD !== 1) throw new Error("USD reference missing");
+
+    rates = nextRates;
+    rateDate = data.time_last_update_utc
+      ? new Date(data.time_last_update_utc).toLocaleDateString()
+      : "";
+    source = "ExchangeRate-API reference rates";
+    updated.textContent = `Reference rates loaded. Last update: ${rateDate || "not supplied"}. Not guaranteed buy/sell rates.`;
+    convert();
+    renderPopular();
+  } catch (error) {
+    updated.textContent = "Live rates could not be loaded. Check your internet and tap Convert Currency to retry.";
+    convert();
+    renderPopular();
+  }
+}
+
+document.getElementById("convert").addEventListener("click", () => {
+  if (Object.keys(rates).length <= 1) loadRates();
+  else convert();
+});
+document.getElementById("swap").addEventListener("click", () => {
+  const oldFrom = from.value;
+  from.value = to.value;
+  to.value = oldFrom;
+  convert();
+});
+amount.addEventListener("input", convert);
+from.addEventListener("change", convert);
+to.addEventListener("change", convert);
+
+renderPopular();
+convert();
+loadRates();
+</script>
+</body>
+  </html>
+
