@@ -4,285 +4,822 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101629">
+<meta name="theme-color" content="#080d19">
+<meta name="description" content="Oswaldo Exchange - currency converter and USDT/MMK P2P market reference.">
 <title>Oswaldo Exchange</title>
+
 <style>
 :root {
-  --bg:#0b1020;
-  --panel:#151d32;
-  --border:#293550;
-  --text:#f4f7ff;
-  --muted:#9eacc5;
-  --accent:#68edc2;
+  --bg: #080d19;
+  --panel: #111a2b;
+  --panel2: #172238;
+  --text: #f4f7ff;
+  --muted: #9caac2;
+  --blue: #55a7ff;
+  --cyan: #55f0e0;
+  --green: #5ce0a0;
+  --border: rgba(255,255,255,.09);
 }
-* { box-sizing:border-box; }
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
 body {
-  margin:0;
-  min-height:100vh;
-  background:radial-gradient(ellipse at top,#1a2944,var(--bg) 65%);
-  color:var(--text);
-  font-family:Arial,sans-serif;
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 10% 0%, #152a4b 0, transparent 38%),
+    radial-gradient(ellipse at 100% 35%, #102d38 0, transparent 30%),
+    var(--bg);
+  font-family: system-ui, -apple-system, Arial, sans-serif;
+  min-height: 100vh;
 }
+
+a { color: inherit; }
+
 header {
-  padding:22px 18px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  gap:12px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
 .logo {
-  width:45px;height:45px;
-  display:grid;place-items:center;
-  background:var(--accent);
-  color:#101629;border-radius:14px;
-  font-size:25px;font-weight:900;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  font-weight: 900;
+  color: #06131c;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  box-shadow: 0 0 25px #55a7ff45;
+  animation: logoPulse 3s infinite ease-in-out;
 }
-.brand {font-size:18px;font-weight:800;letter-spacing:.5px}
-.sub {color:var(--muted);font-size:12px;margin-top:5px}
-main {width:min(100% - 28px,520px);margin:28px auto}
-h1 {font-size:29px;margin:0 0 10px}
-.intro {color:var(--muted);line-height:1.6;font-size:14px}
+
+.brand h1 {
+  font-size: 19px;
+  margin: 0;
+  letter-spacing: .5px;
+}
+
+.brand p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.support {
+  text-decoration: none;
+  border: 1px solid #55a7ff55;
+  background: #55a7ff13;
+  color: #a8d4ff;
+  border-radius: 12px;
+  padding: 10px 13px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.live-ticker {
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: #101a2b99;
+  padding: 12px 0;
+  color: var(--cyan);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+.ticker-track {
+  width: max-content;
+  animation: ticker 28s linear infinite;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 35px 18px 55px;
+}
+
+.hero {
+  text-align: center;
+  margin: 8px auto 35px;
+  animation: slideIn .7s ease both;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.hero h2 {
+  margin: 12px 0;
+  font-size: clamp(30px, 6vw, 54px);
+  line-height: 1.12;
+  letter-spacing: -1.5px;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #fff, var(--cyan), var(--blue));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
 .card {
-  background:rgba(21,29,50,.96);
-  border:1px solid var(--border);
-  border-radius:22px;padding:21px;
-  margin-top:22px;
-  box-shadow:0 15px 45px #0003;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 24px;
+  background: linear-gradient(145deg, #172238ed, #0e1625f2);
+  box-shadow: 0 18px 60px #00000022;
+  animation: slideIn .7s ease both;
 }
-.label {font-size:12px;color:var(--muted);display:block;margin-bottom:9px}
-input,select {
-  width:100%;padding:15px;
-  background:#0c1325;color:var(--text);
-  border:1px solid var(--border);
-  border-radius:12px;font-size:16px;
-  outline:none;
+
+.card h3 {
+  margin: 0 0 7px;
+  font-size: 20px;
 }
-input:focus,select:focus {border-color:var(--accent)}
-.field {margin-bottom:18px}
-.swap {text-align:center;margin:-6px 0 14px}
-.swap button {
-  background:#26334b;color:var(--accent);
-  border:1px solid var(--border);
-  border-radius:50%;width:43px;height:43px;
-  font-size:21px;cursor:pointer;
+
+.subtext {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
 }
+
+label {
+  display: block;
+  margin: 16px 0 8px;
+  color: #c3cde0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input, select {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #34445e;
+  border-radius: 12px;
+  background: #091120;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px #55a7ff1d;
+}
+
+.currency-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+  gap: 9px;
+  align-items: end;
+}
+
+.swap {
+  width: 44px;
+  height: 46px;
+  border: 1px solid #34445e;
+  border-radius: 12px;
+  background: #55a7ff17;
+  color: var(--cyan);
+  cursor: pointer;
+  font-size: 22px;
+}
+
+button {
+  font: inherit;
+}
+
 .primary {
-  width:100%;padding:16px;
-  border:0;border-radius:12px;
-  background:var(--accent);color:#0b1820;
-  font-size:16px;font-weight:800;cursor:pointer;
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  border: 0;
+  border-radius: 12px;
+  color: #07121b;
+  background: linear-gradient(100deg, var(--cyan), var(--blue));
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .2s, filter .2s;
 }
+
+.primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.primary:active { transform: scale(.98); }
+
 .result {
-  margin-top:18px;padding:18px;
-  background:#0c1325;border-radius:14px;
-  border:1px solid var(--border);
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 15px;
+  background: #080f1d;
+  border: 1px solid #55a7ff30;
 }
-.result-label {font-size:12px;color:var(--muted)}
-#result {font-size:29px;font-weight:800;overflow-wrap:anywhere;margin:10px 0}
-#rate {font-size:12px;color:var(--muted);line-height:1.6}
-.note {font-size:12px;color:var(--muted);line-height:1.6;margin-top:15px}
-.section-title {font-size:16px;font-weight:700}
-.rate-row {display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);font-size:13px}
-.rate-row:last-child {border:0}
-.rate-row span:last-child {color:var(--accent);text-align:right}
-footer {text-align:center;color:var(--muted);font-size:12px;padding:25px 18px 35px}
+
+.result small {
+  color: var(--muted);
+}
+
+.result strong {
+  display: block;
+  overflow-wrap: anywhere;
+  margin-top: 8px;
+  font-size: clamp(23px, 4vw, 32px);
+}
+
+.rate-line {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.p2p-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.price-box {
+  padding: 16px 12px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: #091120;
+  min-width: 0;
+}
+
+.price-box .kind {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.price-box strong {
+  display: block;
+  margin: 10px 0 5px;
+  font-size: clamp(19px, 3vw, 27px);
+  overflow-wrap: anywhere;
+}
+
+.buy-price { color: var(--green); }
+.sell-price { color: #ffbc79; }
+
+.status {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #091120;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.status.ok { color: var(--green); }
+.status.warn { color: #ffd18a; }
+
+.action-link {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 12px;
+  padding: 13px;
+  border: 1px solid #55a7ff55;
+  background: #55a7ff12;
+  border-radius: 12px;
+  color: #b6dcff;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.popular-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.popular-item {
+  padding: 15px;
+  border: 1px solid var(--border);
+  background: #091120;
+  border-radius: 14px;
+  min-width: 0;
+}
+
+.popular-item strong {
+  display: block;
+  font-size: 13px;
+}
+
+.popular-item span {
+  display: block;
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.notice {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+footer {
+  text-align: center;
+  padding: 25px 18px 35px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+  border-top: 1px solid var(--border);
+}
+
+footer a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+
+@keyframes ticker {
+  from { transform: translateX(100vw); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes logoPulse {
+  0%, 100% { box-shadow: 0 0 15px #55a7ff25; }
+  50% { box-shadow: 0 0 30px #55a7ff70; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 720px) {
+  header { padding: 18px 14px; }
+  main { padding: 28px 14px 40px; }
+  .grid { grid-template-columns: 1fr; }
+  .card { padding: 19px; }
+  .wide { grid-column: auto; }
+  .popular-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .brand h1 { font-size: 16px; }
+  .support { padding: 9px; font-size: 12px; }
+}
+
+@media (max-width: 360px) {
+  .currency-row { grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr); gap: 5px; }
+  .swap { width: 36px; }
+  .popular-list { grid-template-columns: 1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
 </style>
 </head>
+
 <body>
 <header>
-  <div class="logo">O</div>
-  <div>
-    <div class="brand">OSWALDO EXCHANGE</div>
-    <div class="sub">SIMPLE · SMART · GLOBAL</div>
+  <div class="brand">
+    <div class="logo">O</div>
+    <div>
+      <h1>OSWALDO EXCHANGE</h1>
+      <p>Currency converter & market reference</p>
+    </div>
   </div>
+  <a class="support" href="https://t.me/tonyxplus" target="_blank" rel="noopener">
+    Telegram Support ↗
+  </a>
 </header>
 
+<div class="live-ticker">
+  <div class="ticker-track">
+    ✦ OSWALDO EXCHANGE • GLOBAL CURRENCY CONVERTER • USD ⇄ MMK • USDT ⇄ MMK • SIMPLE • SMART • GLOBAL • CONTACT SUPPORT @tonyxplus •
+  </div>
+</div>
+
 <main>
-  <h1>Currency Converter</h1>
-  <p class="intro">Convert currencies in seconds. Select your currencies and enter an amount to calculate an estimated value.</p>
-
-  <section class="card">
-    <div class="field">
-      <label class="label" for="amount">YOU SEND</label>
-      <input id="amount" type="number" min="0" step="any" value="1" inputmode="decimal">
-    </div>
-
-    <div class="field">
-      <label class="label" for="from">FROM CURRENCY</label>
-      <select id="from"></select>
-    </div>
-
-    <div class="swap">
-      <button id="swap" type="button" aria-label="Swap currencies">⇅</button>
-    </div>
-
-    <div class="field">
-      <label class="label" for="to">TO CURRENCY</label>
-      <select id="to"></select>
-    </div>
-
-    <button class="primary" id="convert" type="button">Convert Currency →</button>
-
-    <div class="result" aria-live="polite">
-      <div class="result-label">ESTIMATED CONVERSION</div>
-      <div id="result">Loading...</div>
-      <div id="rate"></div>
-    </div>
-    <p class="note">This is an estimate, not a transaction or a guaranteed exchange quote. Rates may be delayed or unavailable. Bank rates, market rates, and actual exchange offers may differ.</p>
+  <section class="hero">
+    <div class="eyebrow">Simple • Smart • Global</div>
+    <h2>Exchange with <span class="gradient-text">confidence.</span></h2>
+    <p>
+      Convert currencies using published reference rates and check the
+      Binance P2P USDT/MMK market page for advertiser prices.
+    </p>
   </section>
 
-  <section class="card">
-    <div class="section-title">Popular currencies</div>
-    <div id="popular"></div>
-    <p class="note" id="updated">Rates have not been loaded yet.</p>
-  </section>
+  <div class="grid">
+    <section class="card">
+      <h3>Currency Converter</h3>
+      <p class="subtext">
+        Automatically retrieves published reference rates.
+        These are not guaranteed local cash or P2P trading prices.
+      </p>
+
+      <label for="amount">Amount</label>
+      <input id="amount" type="number" min="0" step="any" value="1"
+        placeholder="Enter amount">
+
+      <div class="currency-row">
+        <div>
+          <label for="from">From</label>
+          <select id="from">
+            <option value="USD">USD — US Dollar</option>
+            <option value="MMK">MMK — Myanmar Kyat</option>
+            <option value="THB">THB — Thai Baht</option>
+            <option value="EUR">EUR — Euro</option>
+            <option value="SGD">SGD — Singapore Dollar</option>
+            <option value="MYR">MYR — Malaysian Ringgit</option>
+            <option value="INR">INR — Indian Rupee</option>
+            <option value="GBP">GBP — British Pound</option>
+            <option value="JPY">JPY — Japanese Yen</option>
+            <option value="CNY">CNY — Chinese Yuan</option>
+            <option value="KRW">KRW — Korean Won</option>
+            <option value="AUD">AUD — Australian Dollar</option>
+            <option value="CAD">CAD — Canadian Dollar</option>
+            <option value="IDR">IDR — Indonesian Rupiah</option>
+            <option value="PHP">PHP — Philippine Peso</option>
+            <option value="VND">VND — Vietnamese Dong</option>
+          </select>
+        </div>
+        <button class="swap" id="swap" type="button" aria-label="Swap currencies">⇄</button>
+        <div>
+          <label for="to">To</label>
+          <select id="to">
+            <option value="MMK">MMK — Myanmar Kyat</option>
+            <option value="USD">USD — US Dollar</option>
+            <option value="THB">THB — Thai Baht</option>
+            <option value="EUR">EUR — Euro</option>
+            <option value="SGD">SGD — Singapore Dollar</option>
+            <option value="MYR">MYR — Malaysian Ringgit</option>
+            <option value="INR">INR — Indian Rupee</option>
+            <option value="GBP">GBP — British Pound</option>
+            <option value="JPY">JPY — Japanese Yen</option>
+            <option value="CNY">CNY — Chinese Yuan</option>
+            <option value="KRW">KRW — Korean Won</option>
+            <option value="AUD">AUD — Australian Dollar</option>
+            <option value="CAD">CAD — Canadian Dollar</option>
+            <option value="IDR">IDR — Indonesian Rupiah</option>
+            <option value="PHP">PHP — Philippine Peso</option>
+            <option value="VND">VND — Vietnamese Dong</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="primary" id="convert" type="button">Convert Currency</button>
+
+      <div class="result" aria-live="polite">
+        <small>Converted amount</small>
+        <strong id="result">Loading rates…</strong>
+        <div class="rate-line" id="rateLine">Connecting to rate provider…</div>
+      </div>
+
+      <p class="notice" id="fxStatus">Loading reference rates…</p>
+      <button class="primary" id="refreshFx" type="button">Refresh Reference Rates</button>
+    </section>
+
+    <section class="card">
+      <h3>USDT / MMK P2P Market</h3>
+      <p class="subtext">
+        USDT is a crypto asset intended to track the US dollar.
+        Binance P2P prices are set by individual advertisers.
+      </p>
+
+      <div class="p2p-cards">
+        <div class="price-box">
+          <div class="kind">Buy USDT</div>
+          <strong class="buy-price" id="p2pBuy">Unavailable</strong>
+          <div class="kind">MMK per USDT</div>
+        </div>
+        <div class="price-box">
+          <div class="kind">Sell USDT</div>
+          <strong class="sell-price" id="p2pSell">Unavailable</strong>
+          <div class="kind">MMK per USDT</div>
+        </div>
+      </div>
+
+      <div class="status warn" id="p2pStatus" aria-live="polite">
+        Checking whether public P2P quotes are available…
+      </div>
+
+      <a class="action-link"
+        href="https://c2c.binance.com/en/trade/BUY/USDT?fiat=MMK"
+        target="_blank" rel="noopener">
+        Open Binance P2P — Buy USDT ↗
+      </a>
+
+      <a class="action-link"
+        href="https://c2c.binance.com/en/trade/SELL/USDT?fiat=MMK"
+        target="_blank" rel="noopener">
+        Open Binance P2P — Sell USDT ↗
+      </a>
+
+      <button class="primary" id="refreshP2P" type="button">
+        Refresh P2P Quote
+      </button>
+
+      <p class="notice">
+        P2P quotes may not load inside this website if Binance blocks
+        browser requests. When unavailable, open Binance directly to view
+        current advertiser offers, limits, and payment methods.
+      </p>
+    </section>
+
+    <section class="card wide">
+      <h3>Popular Currency Reference</h3>
+      <p class="subtext">
+        These values are calculated from the same published reference-rate feed.
+      </p>
+      <div class="popular-list" id="popular">
+        <div class="popular-item"><strong>USD → MMK</strong><span>Loading…</span></div>
+        <div class="popular-item"><strong>USD → THB</strong><span>Loading…</span></div>
+        <div class="popular-item"><strong>USD → SGD</strong><span>Loading…</span></div>
+        <div class="popular-item"><strong>USD → EUR</strong><span>Loading…</span></div>
+        <div class="popular-item"><strong>USD → MYR</strong><span>Loading…</span></div>
+        <div class="popular-item"><strong>USD → JPY</strong><span>Loading…</span></div>
+      </div>
+      <p class="notice">
+        Reference rates can differ from bank rates, cash exchange shops,
+        and Binance P2P advertiser prices.
+      </p>
+    </section>
+  </div>
 </main>
 
 <footer>
-  © <span id="year"></span> Oswaldo Exchange<br>
-  Currency information only · No money transfers
+  <strong>OSWALDO EXCHANGE</strong><br>
+  Currency information for reference only. This website does not execute trades,
+  accept deposits, or hold funds.<br>
+  <a href="https://t.me/tonyxplus" target="_blank" rel="noopener">
+    Contact @tonyxplus
+  </a>
 </footer>
 
 <script>
-const currencies = {
-  USD:"US Dollar",
-  MMK:"Myanmar Kyat",
-  THB:"Thai Baht",
-  EUR:"Euro",
-  SGD:"Singapore Dollar",
-  MYR:"Malaysian Ringgit",
-  INR:"Indian Rupee",
-  GBP:"British Pound",
-  JPY:"Japanese Yen",
-  CNY:"Chinese Yuan",
-  KRW:"South Korean Won",
-  AUD:"Australian Dollar",
-  CAD:"Canadian Dollar",
-  IDR:"Indonesian Rupiah",
-  PHP:"Philippine Peso",
-  VND:"Vietnamese Dong"
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+
+let rates = { USD: 1 };
+let fxLoaded = false;
+let fxUpdatedAt = null;
+
+const fmt = (number, maximumFractionDigits = 2) => {
+  if (!Number.isFinite(number)) return "Unavailable";
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits,
+    minimumFractionDigits: 0
+  }).format(number);
 };
 
-const from = document.getElementById("from");
-const to = document.getElementById("to");
-const amount = document.getElementById("amount");
-const result = document.getElementById("result");
-const rateText = document.getElementById("rate");
-const popular = document.getElementById("popular");
-const updated = document.getElementById("updated");
-
-let rates = { USD:1 };
-let rateDate = "";
-let source = "USD reference rates";
-
-for (const [code,name] of Object.entries(currencies)) {
-  from.add(new Option(`${code} — ${name}`,code));
-  to.add(new Option(`${code} — ${name}`,code));
-}
-from.value = "USD";
-to.value = "MMK";
-document.getElementById("year").textContent = new Date().getFullYear();
-
-function formatNumber(value, code) {
-  return new Intl.NumberFormat("en-US",{
-    maximumFractionDigits: code === "MMK" || code === "IDR" ||
-      code === "VND" || code === "KRW" ? 2 : 4
-  }).format(value);
-}
-
-function renderPopular() {
-  const list = ["USD","MMK","THB","EUR","SGD","MYR"];
-  popular.replaceChildren();
-  for (const code of list) {
-    const row = document.createElement("div");
-    row.className = "rate-row";
-    const left = document.createElement("span");
-    left.textContent = `${code} · ${currencies[code]}`;
-    const right = document.createElement("span");
-    right.textContent = rates[code] !== undefined
-      ? `1 USD = ${formatNumber(rates[code],code)} ${code}`
-      : "Rate unavailable";
-    row.append(left,right);
-    popular.append(row);
-  }
-}
-
-function convert() {
-  const value = Number(amount.value);
-  const a = from.value;
-  const b = to.value;
-
-  if (amount.value.trim() === "" || !Number.isFinite(value) || value < 0) {
-    result.textContent = "Enter a valid amount";
-    rateText.textContent = "";
-    return;
-  }
-  if (rates[a] === undefined || rates[b] === undefined ||
-      rates[a] <= 0 || rates[b] <= 0) {
-    result.textContent = "Rate unavailable";
-    rateText.textContent = "Connect to the internet and try refreshing the rates.";
-    return;
-  }
-
-  const converted = value / rates[a] * rates[b];
-  result.textContent = `${formatNumber(converted,b)} ${b}`;
-  rateText.textContent =
-    `1 ${a} = ${formatNumber(rates[b]/rates[a],b)} ${b}` +
-    (rateDate ? ` · Rate date: ${rateDate}` : "") +
-    ` · Source: ${source}`;
+function timestampText(date) {
+  if (!date) return "Not available";
+  return date.toLocaleString();
 }
 
 async function loadRates() {
-  updated.textContent = "Loading reference rates...";
+  $("fxStatus").textContent = "Refreshing published reference rates…";
+
   try {
-    const response = await fetch("https://open.er-api.com/v6/latest/USD");
-    if (!response.ok) throw new Error("Rate service unavailable");
+    const response = await fetch(
+      "https://open.er-api.com/v6/latest/USD",
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) throw new Error("Rate provider returned an error");
+
     const data = await response.json();
+
     if (data.result !== "success" || !data.rates) {
-      throw new Error("Invalid rate data");
+      throw new Error("Rate data is unavailable");
     }
 
-    const nextRates = {};
-    for (const code of Object.keys(currencies)) {
-      if (Number.isFinite(data.rates[code]) && data.rates[code] > 0) {
-        nextRates[code] = data.rates[code];
-      }
-    }
-    if (nextRates.USD !== 1) throw new Error("USD reference missing");
+    rates = data.rates;
+    rates.USD = 1;
+    fxLoaded = true;
+    fxUpdatedAt = data.time_last_update_utc
+      ? new Date(data.time_last_update_utc)
+      : new Date();
 
-    rates = nextRates;
-    rateDate = data.time_last_update_utc
-      ? new Date(data.time_last_update_utc).toLocaleDateString()
-      : "";
-    source = "ExchangeRate-API reference rates";
-    updated.textContent = `Reference rates loaded. Last update: ${rateDate || "not supplied"}. Not guaranteed buy/sell rates.`;
-    convert();
+    $("fxStatus").textContent =
+      "Reference feed updated: " + timestampText(fxUpdatedAt) +
+      ". Source: open.er-api.com";
+
     renderPopular();
+    convertCurrency();
   } catch (error) {
-    updated.textContent = "Live rates could not be loaded. Check your internet and tap Convert Currency to retry.";
-    convert();
-    renderPopular();
+    $("fxStatus").textContent =
+      "Could not load reference rates. Check your internet connection and try again.";
+    convertCurrency();
   }
 }
 
-document.getElementById("convert").addEventListener("click", () => {
-  if (Object.keys(rates).length <= 1) loadRates();
-  else convert();
-});
-document.getElementById("swap").addEventListener("click", () => {
-  const oldFrom = from.value;
-  from.value = to.value;
-  to.value = oldFrom;
-  convert();
-});
-amount.addEventListener("input", convert);
-from.addEventListener("change", convert);
-to.addEventListener("change", convert);
+function convertCurrency() {
+  const amount = Number($("amount").value);
+  const from = $("from").value;
+  const to = $("to").value;
 
-renderPopular();
-convert();
+  if (!fxLoaded || !rates[from] || !rates[to]) {
+    $("result").textContent = "Rates unavailable";
+    $("rateLine").textContent =
+      "Refresh reference rates when your internet connection is available.";
+    return;
+  }
+
+  if (!Number.isFinite(amount) || amount < 0) {
+    $("result").textContent = "Enter a valid amount";
+    $("rateLine").textContent = "";
+    return;
+  }
+
+  const rate = rates[to] / rates[from];
+  const converted = amount * rate;
+
+  $("result").textContent = fmt(converted, 4) + " " + to;
+  $("rateLine").textContent =
+    "1 " + from + " ≈ " + fmt(rate, 6) + " " + to +
+    " • Feed updated: " + timestampText(fxUpdatedAt);
+}
+
+function renderPopular() {
+  const items = [
+    ["USD", "MMK"],
+    ["USD", "THB"],
+    ["USD", "SGD"],
+    ["USD", "EUR"],
+    ["USD", "MYR"],
+    ["USD", "JPY"]
+  ];
+
+  $("popular").innerHTML = items.map(([from, to]) => {
+    const rate = rates[to] / rates[from];
+    return `
+      <div class="popular-item">
+        <strong>${from} → ${to}</strong>
+        <span>${Number.isFinite(rate) ? fmt(rate, 4) + " " + to : "Unavailable"}</span>
+      </div>`;
+  }).join("");
+}
+
+function findPrice(value, depth = 0) {
+  if (depth > 5 || value == null) return null;
+
+  if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }
+
+  if (typeof value !== "object") return null;
+
+  // Prefer fields explicitly named price.
+  for (const key of ["price", "quotePrice", "averagePrice", "avgPrice"]) {
+    if (value[key] != null) {
+      const result = findPrice(value[key], depth + 1);
+      if (result) return result;
+    }
+  }
+
+  // Some quote endpoints return nested objects or arrays.
+  for (const key of ["data", "result", "list", "items"]) {
+    if (value[key] != null) {
+      const result = findPrice(value[key], depth + 1);
+      if (result) return result;
+    }
+  }
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const result = findPrice(item, depth + 1);
+      if (result) return result;
+    }
+  }
+
+  return null;
+}
+
+async function loadP2P() {
+  $("p2pStatus").className = "status warn";
+  $("p2pStatus").textContent =
+    "Requesting public Binance P2P quote…";
+
+  $("p2pBuy").textContent = "Loading…";
+  $("p2pSell").textContent = "Loading…";
+
+  const quoteUrl = (tradeType) =>
+    "https://www.binance.com/bapi/c2c/v1/public/c2c/agent/quote-price" +
+    "?fiat=MMK&asset=USDT&tradeType=" + tradeType +
+    "&_=" + Date.now();
+
+  try {
+    const results = await Promise.all(["BUY", "SELL"].map(async (type) => {
+      const response = await fetch(quoteUrl(type), {
+        cache: "no-store"
+      });
+      if (!response.ok) throw new Error("Quote request failed");
+      return await response.json();
+    }));
+
+    const buy = findPrice(results[0]);
+    const sell = findPrice(results[1]);
+
+    if (!buy || !sell) {
+      throw new Error("No usable P2P quote was returned");
+    }
+
+    $("p2pBuy").textContent = fmt(buy, 2);
+    $("p2pSell").textContent = fmt(sell, 2);
+    $("p2pStatus").className = "status ok";
+    $("p2pStatus").textContent =
+      "Public quote received at " + timestampText(new Date()) +
+      ". Check Binance directly before relying on a price.";
+  } catch (error) {
+    $("p2pBuy").textContent = "Unavailable";
+    $("p2pSell").textContent = "Unavailable";
+    $("p2pStatus").className = "status warn";
+    $("p2pStatus").textContent =
+      "Live P2P quotes could not be verified in this browser. " +
+      "Binance may block direct website requests or return a different response. " +
+      "Use the official Binance P2P links above for current advertiser prices.";
+  }
+}
+
+$("convert").addEventListener("click", convertCurrency);
+$("amount").addEventListener("input", convertCurrency);
+$("from").addEventListener("change", convertCurrency);
+$("to").addEventListener("change", convertCurrency);
+
+$("swap").addEventListener("click", () => {
+  const from = $("from");
+  const to = $("to");
+  const previous = from.value;
+  from.value = to.value;
+  to.value = previous;
+  convertCurrency();
+});
+
+$("refreshFx").addEventListener("click", loadRates);
+$("refreshP2P").addEventListener("click", loadP2P);
+
+// Refresh published reference rates every 30 minutes.
+// Try P2P quotes every 60 seconds; browser/API access may be blocked.
 loadRates();
+loadP2P();
+setInterval(loadRates, 30 * 60 * 1000);
+setInterval(loadP2P, 60 * 1000);
 </script>
 </body>
-  </html>
-
+</html>
