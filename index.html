@@ -1,547 +1,391 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080d1a">
-<meta name="description" content="Oswaldo Exchange — traditional fiat currency rates and manual exchange requests.">
+<meta name="theme-color" content="#07111f">
 <title>Oswaldo Exchange</title>
+
 <style>
 :root {
-  --bg:#080d1a; --panel:#111b30; --line:#2b3b59;
-  --text:#f2f6ff; --muted:#a0aec9; --cyan:#5cf2df;
-  --blue:#6796ff; --gold:#f5ce7d; --green:#50dfa0;
+  --bg:#06101e;
+  --panel:#0d1b2d;
+  --line:#1c3550;
+  --blue:#39baff;
+  --cyan:#64f4ff;
+  --text:#edf7ff;
+  --muted:#8da7bd;
+  --green:#49e2a0;
+  --red:#ff7185;
 }
-* { box-sizing:border-box }
+* { box-sizing:border-box; }
 body {
-  margin:0; min-height:100vh; color:var(--text);
-  font-family:system-ui,-apple-system,Arial,sans-serif;
-  background:radial-gradient(ellipse at 15% 0%,#1c3158,transparent 38%),
-  radial-gradient(ellipse at 100% 40%,#123d48,transparent 30%),var(--bg);
+  margin:0;
+  color:var(--text);
+  background:
+    radial-gradient(ellipse at top,#112d4a 0%,transparent 48%),
+    var(--bg);
+  font-family:Arial,Helvetica,sans-serif;
 }
-button,input,select,textarea { font:inherit }
-button { cursor:pointer }
-header,main { max-width:1100px; margin:auto; padding:18px }
-header { display:flex; align-items:center; justify-content:space-between; gap:12px }
-.brand { display:flex; align-items:center; gap:12px }
-.logo {
-  width:46px;height:46px;border-radius:14px;display:grid;
-  place-items:center;font-size:26px;font-weight:900;color:#07131c;
-  background:linear-gradient(135deg,var(--cyan),var(--blue));
-  box-shadow:0 0 25px #5cf2df33
+header {
+  padding:22px 16px;
+  border-bottom:1px solid var(--line);
+  background:#07111ee8;
 }
-h1 { font-size:17px; margin:0; letter-spacing:1px }
-.sub,.muted,.small { color:var(--muted); line-height:1.7 }
-.sub { font-size:11px; margin:4px 0 0 }
-.small { font-size:12px }
-.status { color:var(--gold); font-size:11px; text-align:right }
-.ticker {
-  overflow:hidden;white-space:nowrap;padding:11px 0;
-  border-block:1px solid var(--line);background:#111b30;color:var(--cyan)
+.wrap { width:min(100% - 28px,1000px);margin:auto; }
+.brand { font-size:25px;font-weight:900;letter-spacing:1px; }
+.brand span { color:var(--cyan); }
+.sub { color:var(--muted);font-size:12px;margin-top:7px; }
+.pill {
+  display:inline-block;margin-top:12px;padding:6px 10px;
+  border:1px solid #23617d;border-radius:20px;
+  color:var(--cyan);font-size:11px;
 }
-.ticker span { display:inline-block;animation:move 30s linear infinite }
-.hero { padding:22px 0 }
-.eyebrow { color:var(--cyan);letter-spacing:3px;font-size:11px;font-weight:800 }
-.hero h2 { font-size:clamp(32px,6vw,52px);line-height:1.1;margin:12px 0 }
-.gradient {
-  background:linear-gradient(90deg,#fff,var(--cyan),var(--blue));
-  background-clip:text;-webkit-background-clip:text;color:transparent
+main { padding:22px 0 40px; }
+h2 { font-size:19px;margin:0 0 15px; }
+.panel {
+  background:linear-gradient(145deg,#10233a,#091626);
+  border:1px solid var(--line);border-radius:18px;
+  padding:18px;margin-bottom:16px;
+  box-shadow:0 12px 35px #0002;
 }
-.hero p { color:var(--muted);max-width:680px;line-height:1.8;font-size:14px }
-.notice {
-  border:1px solid #f5ce7d55;background:#f5ce7d0c;color:#f7dfa8;
-  padding:13px;border-radius:13px;font-size:12px;line-height:1.8;margin-bottom:18px
+label { display:block;color:var(--muted);font-size:12px;margin:12px 0 7px; }
+input,select,button {
+  width:100%;padding:13px;border-radius:10px;
+  border:1px solid #25445f;background:#071321;color:var(--text);
+  font-size:15px;outline:none;
 }
-.tabs { display:flex;gap:8px;overflow:auto;padding:5px 0 17px }
-.tabs button {
-  white-space:nowrap;background:var(--panel);color:var(--muted);
-  border:1px solid var(--line);border-radius:11px;padding:11px 15px;font-weight:700
+input:focus,select:focus { border-color:var(--cyan); }
+.grid { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+button {
+  cursor:pointer;font-weight:800;border:0;
+  background:linear-gradient(90deg,#1688ff,#36d9e8);
+  color:#03101c;margin-top:14px;
 }
-.tabs button.active { color:var(--cyan);border-color:var(--cyan);background:#5cf2df12 }
-.page { display:none }
-.page.active { display:block;animation:appear .25s ease }
-.grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px }
-.card {
-  min-width:0;padding:21px;border:1px solid var(--line);border-radius:18px;
-  background:linear-gradient(145deg,#17233bf0,#0e1628f5);
-  box-shadow:0 15px 45px #0003
+button.secondary {
+  color:var(--text);background:#14283e;border:1px solid var(--line);
 }
-h3 { margin:0 0 8px;font-size:19px }
-label { display:block;font-size:12px;color:#cbd7ec;font-weight:750;margin:15px 0 7px }
-input,select,textarea {
-  width:100%;min-width:0;background:#090f20;color:var(--text);
-  border:1px solid #364661;border-radius:11px;padding:12px;outline:none
-}
-textarea { min-height:85px;resize:vertical }
-input:focus,select:focus,textarea:focus { border-color:var(--cyan) }
-button:disabled { opacity:.5;cursor:not-allowed }
-.btn {
-  display:inline-block;text-align:center;text-decoration:none;
-  border:0;border-radius:11px;padding:12px 15px;
-  background:linear-gradient(110deg,var(--cyan),var(--blue));
-  color:#07131c;font-weight:850
-}
-.btn.secondary { background:#1b2943;color:var(--text);border:1px solid #364661 }
-.btn.full { width:100%;margin-top:13px }
 .result {
-  margin-top:16px;padding:16px;border-radius:14px;
-  background:#080f20;border:1px solid #5cf2df44
+  margin-top:15px;background:#061321;border:1px solid #1a3c54;
+  border-radius:12px;padding:15px;overflow-wrap:anywhere;
 }
-.result small { color:var(--muted) }
-.result strong { display:block;font-size:clamp(23px,4vw,32px);margin:8px 0;overflow-wrap:anywhere }
-.result p { color:var(--muted);font-size:12px;line-height:1.7;margin-bottom:0 }
-.pill { border:1px solid var(--line);border-radius:20px;padding:6px 9px;color:var(--muted);font-size:10px }
-.headrow { display:flex;justify-content:space-between;align-items:center;gap:10px }
-.tablewrap { overflow-x:auto;margin-top:12px }
-table { width:100%;border-collapse:collapse;font-size:12px }
-th,td { text-align:left;padding:12px 8px;border-bottom:1px solid var(--line) }
-th { color:var(--muted) }
-td { overflow-wrap:anywhere }
-footer {
-  margin-top:35px;text-align:center;border-top:1px solid var(--line);
-  padding:25px 16px;color:var(--muted);font-size:11px;line-height:1.8
+.result small { color:var(--muted);display:block;margin-bottom:8px; }
+.result strong { font-size:25px;color:var(--cyan); }
+.note { color:var(--muted);font-size:12px;line-height:1.6;margin-top:12px; }
+.status { font-size:12px;color:var(--muted);line-height:1.6; }
+.status.good { color:var(--green); }
+.status.bad { color:var(--red); }
+.tablewrap { overflow-x:auto; }
+table { width:100%;border-collapse:collapse;min-width:440px; }
+th,td { padding:12px 9px;text-align:left;border-bottom:1px solid var(--line);font-size:13px; }
+th { color:var(--muted);font-weight:600; }
+td:last-child,th:last-child { text-align:right; }
+.coin { font-weight:800; }
+.pair { color:var(--muted);font-size:11px;margin-top:4px; }
+footer { text-align:center;color:var(--muted);font-size:11px;padding:20px; }
+@media(max-width:520px) {
+  .grid { grid-template-columns:1fr;gap:0; }
+  .panel { padding:15px; }
+  .brand { font-size:22px; }
 }
-footer strong { color:var(--cyan) }
-@keyframes move { from { transform:translateX(100vw) } to { transform:translateX(-100%) } }
-@keyframes appear { from { opacity:0;transform:translateY(6px) } to { opacity:1;transform:translateY(0) } }
-@media(max-width:720px) {
-  header,main { padding:14px 12px }
-  .grid { grid-template-columns:1fr }
-  .card { padding:16px }
-  h1 { font-size:14px }
-}
-@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important } }
 </style>
 </head>
+
 <body>
 <header>
-  <div class="brand">
-    <div class="logo">O</div>
-    <div>
-      <h1>OSWALDO EXCHANGE</h1>
-      <p class="sub">Traditional Fiat Currency Exchange</p>
-    </div>
+  <div class="wrap">
+    <div class="brand">OSWALDO <span>EXCHANGE</span></div>
+    <div class="sub">MARKET PRICE CONVERTER · LIVE DATA CONNECTION</div>
+    <div class="pill">BINANCE MARKET DATA ONLY</div>
   </div>
-  <div class="status" id="connection">Connecting to rates…</div>
 </header>
 
-<div class="ticker"><span id="ticker">
-  ✦ OSWALDO EXCHANGE ✦ USD ⇄ MMK ✦ USD ⇄ THB ✦ EUR ⇄ USD ✦ FIAT ONLY ✦
-</span></div>
+<main class="wrap">
+  <section class="panel">
+    <h2>Currency Converter</h2>
 
-<main>
-  <section class="hero">
-    <div class="eyebrow">✦ GLOBAL FIAT CURRENCY ✦</div>
-    <h2>Exchange beyond <span class="gradient">boundaries.</span></h2>
-    <p>Convert traditional currencies, check published reference rates,
-    and contact us to request a manually reviewed exchange.</p>
-  </section>
+    <label for="amount">Amount</label>
+    <input id="amount" type="number" min="0" step="any" value="1">
 
-  <div class="notice">
-    <strong>Rate transparency:</strong>
-    Published reference rates are supplied by a third-party provider, not Binance.
-    Binance Fiat FX is only used when an official, applicable rate source is available;
-    this website does not currently retrieve private Binance FX quotes.
-    Reference rates may differ from local cash-market rates and the final rate agreed
-    for an exchange. This website does not receive or transfer money.
-  </div>
-
-  <nav class="tabs" aria-label="Main navigation">
-    <button class="active" data-page="exchange">Converter</button>
-    <button data-page="rates">Market Rates</button>
-    <button data-page="request">Request Exchange</button>
-  </nav>
-
-  <section class="page active" id="page-exchange">
     <div class="grid">
-      <div class="card">
-        <div class="headrow">
-          <h3>Currency Converter</h3><span class="pill">FIAT ONLY</span>
-        </div>
-        <p class="small">Indicative conversion using published reference rates.</p>
-
-        <label for="amount">Amount</label>
-        <input id="amount" type="number" min="0" step="any" value="1">
-
-        <label for="from">From currency</label>
+      <div>
+        <label for="from">From</label>
         <select id="from"></select>
-
-        <button class="btn secondary full" id="swap" type="button">⇅ Swap currencies</button>
-
-        <label for="to">To currency</label>
+      </div>
+      <div>
+        <label for="to">To</label>
         <select id="to"></select>
-
-        <button class="btn full" id="convert" type="button">Calculate</button>
-
-        <div class="result" aria-live="polite">
-          <small>Estimated amount</small>
-          <strong id="converted">Loading rates…</strong>
-          <p id="rateDetails">Connecting to the reference-rate provider.</p>
-        </div>
-        <p class="small" id="rateStatus">Loading rates…</p>
-        <button class="btn secondary full" id="refresh" type="button">Refresh rates</button>
-      </div>
-
-      <div class="card">
-        <h3>Exchange Request</h3>
-        <p class="small">
-          Want to exchange actual money? Submit a request with the amount and
-          currency pair. We will discuss the rate, payment method and availability
-          before agreeing to any transaction.
-        </p>
-        <button class="btn full" type="button" id="goRequest">Request an exchange</button>
-        <hr>
-        <h3>Rate source</h3>
-        <p class="small">
-          General fiat reference rates: open.er-api.com.<br>
-          Binance Fiat FX: no live Binance quote is connected in this version.
-          No Binance rate is invented or substituted.
-        </p>
-        <a class="btn secondary full" href="https://www.binance.com/en/support/faq/detail/37bad5980c3e4dbbaf579d56dfda2dd5" target="_blank" rel="noopener">Official Binance Fiat FX information</a>
       </div>
     </div>
+
+    <button id="convertBtn">Convert Market Price</button>
+    <button id="swapBtn" class="secondary">Swap Currencies</button>
+
+    <div class="result" aria-live="polite">
+      <small>Converted market reference</small>
+      <strong id="result">Loading prices…</strong>
+      <div id="rateDetail" class="note"></div>
+    </div>
+
+    <p class="note">
+      Rates are derived only from Binance public Spot market tickers.
+      USD is treated as approximately 1 USDT for this calculation;
+      USD and USDT are not guaranteed to have the same price.
+      These are not direct fiat-to-fiat quotes.
+    </p>
   </section>
 
-  <section class="page" id="page-rates">
-    <div class="card">
-      <div class="headrow">
-        <div>
-          <h3>Traditional Currency Rates</h3>
-          <p class="small">Rate means units of currency for 1 USD.</p>
-        </div>
-        <span class="pill" id="rateBadge">Loading</span>
-      </div>
-      <label for="search">Search currencies</label>
-      <input id="search" placeholder="Search USD, MMK, THB, EUR…">
-      <div class="tablewrap">
-        <table>
-          <thead><tr><th>Currency</th><th>Code</th><th>Units per USD</th></tr></thead>
-          <tbody id="rateRows"><tr><td colspan="3">Loading rates…</td></tr></tbody>
-        </table>
-      </div>
-      <p class="small" id="updated">Waiting for rate data…</p>
+  <section class="panel">
+    <h2>Market Prices</h2>
+    <div id="status" class="status">Connecting to market data…</div>
+    <div class="tablewrap" style="margin-top:12px">
+      <table>
+        <thead>
+          <tr><th>Currency</th><th>Binance pair</th><th>Price in USDT*</th></tr>
+        </thead>
+        <tbody id="ratesTable">
+          <tr><td colspan="3">Loading market prices…</td></tr>
+        </tbody>
+      </table>
     </div>
-  </section>
-
-  <section class="page" id="page-request">
-    <div class="grid">
-      <div class="card">
-        <h3>Manual Exchange Request</h3>
-        <p class="small">
-          This opens Telegram's share screen with your request prepared.
-          You must choose the recipient and send it yourself.
-          It does not create a stored order or confirm payment.
-        </p>
-
-        <form id="requestForm">
-          <label for="customerName">Your name or nickname</label>
-          <input id="customerName" maxlength="80" required autocomplete="name">
-
-          <label for="contact">Your contact (Telegram username, for example)</label>
-          <input id="contact" maxlength="100" required placeholder="@yourusername">
-
-          <label for="direction">I want to</label>
-          <select id="direction">
-            <option value="Buy">Buy the target currency</option>
-            <option value="Sell">Sell the source currency</option>
-          </select>
-
-          <label for="requestAmount">Amount</label>
-          <input id="requestAmount" type="number" min="0.000001" step="any" required>
-
-          <label for="requestFrom">From currency</label>
-          <select id="requestFrom"></select>
-
-          <label for="requestTo">To currency</label>
-          <select id="requestTo"></select>
-
-          <label for="notes">Additional message (optional)</label>
-          <textarea id="notes" maxlength="500" placeholder="Preferred payment method or questions. Do not enter passwords or PINs."></textarea>
-
-          <div class="result">
-            <small>Indicative reference calculation</small>
-            <strong id="requestEstimate">—</strong>
-            <p id="requestEstimateNote">A final rate must be agreed with the service operator.</p>
-          </div>
-
-          <button class="btn full" type="submit">Prepare request in Telegram</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h3>Before you exchange</h3>
-        <p class="small">
-          1. Submit your request.<br>
-          2. Wait for the operator to confirm availability, the final rate,
-          fees, payment method and terms.<br>
-          3. Only proceed after verifying the recipient and payment instructions.<br>
-          4. Keep your payment receipt and request details.<br>
-          5. Never share a banking password, PIN, or one-time verification code.
-        </p>
-        <div class="notice">
-          A request is not a completed transaction. Do not send money based solely
-          on the converter's estimated rate. The operator must verify the payment
-          independently before marking a transaction as paid or complete.
-        </div>
-        <a class="btn secondary full" href="https://t.me/tonyxplus" target="_blank" rel="noopener">Contact support on Telegram</a>
-      </div>
-    </div>
+    <button id="refreshBtn" class="secondary">Refresh Prices</button>
+    <p class="note">
+      *USDT is a crypto asset. A currency appears only when Binance returns
+      a matching Spot market ticker. Missing pairs are not estimated using
+      another provider.
+    </p>
   </section>
 </main>
 
-<footer>
-  <strong>OSWALDO EXCHANGE</strong><br>
-  Traditional fiat reference rates and manual exchange enquiries.<br>
-  Not affiliated with Binance. No payment is processed by this website.
-</footer>
+<footer>OSWALDO EXCHANGE · Market data is informational, not an exchange guarantee.</footer>
 
 <script>
 "use strict";
 
+const API = "https://api.binance.com/api/v3/ticker/price";
+
+// These are fiat currency codes we attempt to match to Binance
+// Spot market symbols. A code is shown only if a matching market exists.
+const CURRENCIES = [
+  ["USD","US Dollar"],
+  ["EUR","Euro"],
+  ["GBP","British Pound"],
+  ["TRY","Turkish Lira"],
+  ["BRL","Brazilian Real"],
+  ["AUD","Australian Dollar"],
+  ["CAD","Canadian Dollar"],
+  ["CHF","Swiss Franc"],
+  ["JPY","Japanese Yen"],
+  ["PLN","Polish Zloty"],
+  ["UAH","Ukrainian Hryvnia"],
+  ["RUB","Russian Ruble"],
+  ["NGN","Nigerian Naira"],
+  ["ZAR","South African Rand"],
+  ["MXN","Mexican Peso"],
+  ["THB","Thai Baht"],
+  ["MMK","Myanmar Kyat"]
+];
+
 const $ = id => document.getElementById(id);
-
-const CURRENCIES = {
-  USD:"US Dollar", MMK:"Myanmar Kyat", THB:"Thai Baht",
-  EUR:"Euro", SGD:"Singapore Dollar", MYR:"Malaysian Ringgit",
-  INR:"Indian Rupee", GBP:"British Pound", JPY:"Japanese Yen",
-  CNY:"Chinese Yuan", KRW:"South Korean Won", AUD:"Australian Dollar",
-  CAD:"Canadian Dollar", IDR:"Indonesian Rupiah", PHP:"Philippine Peso",
-  VND:"Vietnamese Dong", CHF:"Swiss Franc", NZD:"New Zealand Dollar",
-  HKD:"Hong Kong Dollar", AED:"UAE Dirham", SAR:"Saudi Riyal",
-  BDT:"Bangladeshi Taka", NPR:"Nepalese Rupee", PKR:"Pakistani Rupee",
-  LKR:"Sri Lankan Rupee", TRY:"Turkish Lira", ZAR:"South African Rand",
-  BRL:"Brazilian Real", MXN:"Mexican Peso", SEK:"Swedish Krona",
-  NOK:"Norwegian Krone", DKK:"Danish Krone", PLN:"Polish Zloty",
-  CZK:"Czech Koruna", HUF:"Hungarian Forint", KWD:"Kuwaiti Dinar",
-  QAR:"Qatari Riyal", OMR:"Omani Rial", BHD:"Bahraini Dinar",
-  KHR:"Cambodian Riel", LAK:"Lao Kip"
-};
-
-let rates = {USD:1};
-let loaded = false;
+let tickerMap = {};
+let marketValues = {};
+let marketPairs = {};
 let updatedAt = null;
-let rateTimer = null;
 
-function format(value, digits=4) {
-  if (!Number.isFinite(value)) return "Unavailable";
-  return value.toLocaleString("en-US",{maximumFractionDigits:digits});
+function fmt(value) {
+  return Number(value).toLocaleString(undefined, {
+    maximumFractionDigits: 8
+  });
 }
 
-function populate(id, selected) {
-  $(id).innerHTML = Object.entries(CURRENCIES).map(([code,name]) =>
-    `<option value="${code}">${code} — ${name}</option>`
-  ).join("");
-  $(id).value = selected;
+function setStatus(message, kind="") {
+  $("status").textContent = message;
+  $("status").className = "status " + kind;
 }
 
-[
-  ["from","USD"],["to","MMK"],
-  ["requestFrom","USD"],["requestTo","MMK"]
-].forEach(([id,value]) => populate(id,value));
+function initSelectors() {
+  for (const [code, name] of CURRENCIES) {
+    for (const id of ["from", "to"]) {
+      const option = document.createElement("option");
+      option.value = code;
+      option.textContent = code + " — " + name;
+      $(id).appendChild(option);
+    }
+  }
 
-function showPage(page) {
-  document.querySelectorAll(".page").forEach(el =>
-    el.classList.toggle("active",el.id === "page-" + page));
-  document.querySelectorAll(".tabs button").forEach(el =>
-    el.classList.toggle("active",el.dataset.page === page));
-  if (page === "rates") renderRates();
-  if (page === "request") updateRequestEstimate();
+  $("from").value = "USD";
+  $("to").value = "EUR";
 }
 
-document.querySelectorAll(".tabs button").forEach(button =>
-  button.addEventListener("click",() => showPage(button.dataset.page)));
+function findUsdtValue(code) {
+  if (code === "USD") {
+    // Explicit approximation, not a Binance fiat USD quote.
+    return { value: 1, pair: "USDT reference", approximate: true };
+  }
 
-$("goRequest").addEventListener("click",() => {
-  $("requestAmount").value = $("amount").value;
-  $("requestFrom").value = $("from").value;
-  $("requestTo").value = $("to").value;
-  updateRequestEstimate();
-  showPage("request");
-});
+  const direct = code + "USDT";
+  if (tickerMap[direct] !== undefined) {
+    return { value: tickerMap[direct], pair: direct, approximate: false };
+  }
 
-function convert(amount, from, to) {
-  if (!loaded || !rates[from] || !rates[to]) return null;
-  return amount / rates[from] * rates[to];
+  const inverse = "USDT" + code;
+  if (tickerMap[inverse] !== undefined && tickerMap[inverse] > 0) {
+    return {
+      value: 1 / tickerMap[inverse],
+      pair: inverse,
+      approximate: false
+    };
+  }
+
+  return null;
 }
 
-function calculate() {
+function getRate(from, to) {
+  const a = findUsdtValue(from);
+  const b = findUsdtValue(to);
+
+  if (!a || !b || b.value === 0) return null;
+
+  return {
+    rate: a.value / b.value,
+    fromPair: a.pair,
+    toPair: b.pair,
+    approximate: a.approximate || b.approximate
+  };
+}
+
+function renderTable() {
+  const body = $("ratesTable");
+  body.replaceChildren();
+
+  let shown = 0;
+
+  for (const [code, name] of CURRENCIES) {
+    if (code === "USD") continue;
+
+    const item = findUsdtValue(code);
+    if (!item) continue;
+
+    const tr = document.createElement("tr");
+    const c1 = document.createElement("td");
+    const c2 = document.createElement("td");
+    const c3 = document.createElement("td");
+
+    c1.innerHTML = "";
+    const title = document.createElement("div");
+    title.className = "coin";
+    title.textContent = code;
+    const desc = document.createElement("div");
+    desc.className = "pair";
+    desc.textContent = name;
+    c1.append(title, desc);
+
+    c2.textContent = item.pair;
+    c3.textContent = fmt(item.value);
+
+    tr.append(c1, c2, c3);
+    body.appendChild(tr);
+    shown++;
+  }
+
+  if (shown === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 3;
+    td.textContent = "No matching fiat-denominated Spot pairs were returned.";
+    tr.appendChild(td);
+    body.appendChild(tr);
+  }
+}
+
+function convert() {
   const amount = Number($("amount").value);
   const from = $("from").value;
   const to = $("to").value;
 
   if (!Number.isFinite(amount) || amount < 0) {
-    $("converted").textContent = "Enter a valid amount";
-    $("rateDetails").textContent = "";
+    $("result").textContent = "Enter a valid amount";
+    $("rateDetail").textContent = "";
     return;
   }
 
-  const value = convert(amount,from,to);
-  if (value === null) {
-    $("converted").textContent = "Rate unavailable";
-    $("rateDetails").textContent =
-      "A current reference rate is not available for this pair.";
+  const data = getRate(from, to);
+
+  if (!data) {
+    $("result").textContent = "Rate unavailable";
+    $("rateDetail").textContent =
+      "No usable Binance Spot market pair was found for " +
+      from + " or " + to + ". No other rate source is used.";
     return;
   }
 
-  const unitRate = convert(1,from,to);
-  $("converted").textContent = format(value,6) + " " + to;
-  $("rateDetails").textContent =
-    "1 " + from + " ≈ " + format(unitRate,6) + " " + to +
-    ". Reference calculation only; not a confirmed transaction quote.";
+  $("result").textContent = fmt(amount * data.rate) + " " + to;
+  $("rateDetail").textContent =
+    "1 " + from + " ≈ " + fmt(data.rate) + " " + to +
+    " · Pairs: " + data.fromPair + " / " + data.toPair +
+    (data.approximate ? " · Includes USD/USDT approximation." : "") +
+    (updatedAt ? " · Updated " + updatedAt.toLocaleTimeString() : "");
 }
 
-function updateRequestEstimate() {
-  const amount = Number($("requestAmount").value);
-  const from = $("requestFrom").value;
-  const to = $("requestTo").value;
-  const value = amount > 0 ? convert(amount,from,to) : null;
-
-  $("requestEstimate").textContent =
-    value === null ? "Rate unavailable" : format(value,6) + " " + to;
-  $("requestEstimateNote").textContent = loaded
-    ? "Reference estimate only. Confirm the actual rate and fees with the operator."
-    : "Rates are not loaded. Do not rely on an estimated amount.";
-}
-
-function renderRates() {
-  const query = $("search").value.trim().toLowerCase();
-  const rows = Object.keys(CURRENCIES).filter(code =>
-    code.toLowerCase().includes(query) ||
-    CURRENCIES[code].toLowerCase().includes(query)
-  );
-
-  $("rateRows").innerHTML = rows.map(code => {
-    const rate = rates[code];
-    const display = loaded && Number.isFinite(rate) ? format(rate,6) : "Unavailable";
-    return `<tr><td>${CURRENCIES[code]}</td><td>${code}</td><td>${display}</td></tr>`;
-  }).join("") || '<tr><td colspan="3">No matching currencies.</td></tr>';
-}
-
-function updateTicker() {
-  const pairs = [["USD","MMK"],["USD","THB"],["EUR","USD"],["USD","SGD"]];
-  $("ticker").textContent = "✦ OSWALDO EXCHANGE ✦ " + pairs.map(([a,b]) => {
-    const value = convert(1,a,b);
-    return value === null ? `${a} ⇄ ${b}` : `1 ${a} ≈ ${format(value,3)} ${b}`;
-  }).join(" ✦ ") + " ✦ FIAT ONLY ✦";
-}
-
-async function loadRates() {
-  $("connection").textContent = "Loading rates…";
-  $("rateStatus").textContent = "Connecting to reference-rate provider…";
-  $("refresh").disabled = true;
+async function fetchPrices() {
+  setStatus("Fetching latest Binance Spot tickers…");
 
   try {
-    const response = await fetch("https://open.er-api.com/v6/latest/USD", {
-      cache:"no-store"
-    });
-    if (!response.ok) throw new Error("Rate provider error");
-
-    const data = await response.json();
-    if (data.result !== "success" || !data.rates) {
-      throw new Error("Invalid rate response");
+    const response = await fetch(API, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
     }
 
-    rates = data.rates;
-    rates.USD = 1;
-    loaded = true;
-    updatedAt = data.time_last_update_utc
-      ? new Date(data.time_last_update_utc) : new Date();
+    const data = await response.json();
+    const next = {};
 
-    $("connection").textContent = "Reference rates connected";
-    $("rateBadge").textContent = "Reference rates";
-    $("rateStatus").textContent =
-      "Provider update: " + updatedAt.toLocaleString() +
-      ". These are not Binance FX quotes.";
-    $("updated").textContent =
-      "Source: open.er-api.com | Provider update: " +
-      updatedAt.toLocaleString() +
-      ". Check the provider's terms and update schedule.";
-    calculate();
-    updateRequestEstimate();
-    renderRates();
-    updateTicker();
+    for (const item of data) {
+      const price = Number(item.price);
+      if (item.symbol && Number.isFinite(price) && price > 0) {
+        next[item.symbol] = price;
+      }
+    }
+
+    tickerMap = next;
+    updatedAt = new Date();
+
+    renderTable();
+    convert();
+
+    setStatus(
+      "Connected · Binance Spot market data received · " +
+      updatedAt.toLocaleTimeString(),
+      "good"
+    );
   } catch (error) {
-    $("connection").textContent = "Rates unavailable";
-    $("rateBadge").textContent = "Unavailable";
-    $("rateStatus").textContent =
-      "Could not verify current rates. Check your internet connection and retry.";
-    $("updated").textContent =
-      "No current rates verified. Do not treat unavailable rates as current.";
-    loaded = false;
-    calculate();
-    updateRequestEstimate();
-    renderRates();
-  } finally {
-    $("refresh").disabled = false;
+    console.error(error);
+    setStatus(
+      "Could not connect to Binance market data. Check your connection and try again.",
+      "bad"
+    );
+
+    $("result").textContent = "Prices unavailable";
+    $("rateDetail").textContent =
+      "No fallback rate provider is configured.";
   }
 }
 
-$("convert").addEventListener("click",calculate);
-$("refresh").addEventListener("click",loadRates);
-$("amount").addEventListener("input",calculate);
-$("from").addEventListener("change",calculate);
-$("to").addEventListener("change",calculate);
+initSelectors();
 
-$("swap").addEventListener("click",() => {
+$("convertBtn").addEventListener("click", convert);
+$("swapBtn").addEventListener("click", () => {
   const oldFrom = $("from").value;
   $("from").value = $("to").value;
   $("to").value = oldFrom;
-  calculate();
+  convert();
 });
+$("refreshBtn").addEventListener("click", fetchPrices);
+$("amount").addEventListener("input", convert);
+$("from").addEventListener("change", convert);
+$("to").addEventListener("change", convert);
 
-$("search").addEventListener("input",renderRates);
-
-["requestAmount","requestFrom","requestTo"].forEach(id => {
-  $(id).addEventListener("input",updateRequestEstimate);
-  $(id).addEventListener("change",updateRequestEstimate);
-});
-
-$("requestForm").addEventListener("submit",event => {
-  event.preventDefault();
-
-  const name = $("customerName").value.trim();
-  const contact = $("contact").value.trim();
-  const amount = Number($("requestAmount").value);
-  const from = $("requestFrom").value;
-  const to = $("requestTo").value;
-  const direction = $("direction").value;
-  const notes = $("notes").value.trim();
-
-  if (!name || !contact || !Number.isFinite(amount) || amount <= 0) {
-    alert("Please complete the required fields with a valid amount.");
-    return;
-  }
-
-  if (from === to) {
-    alert("Please choose two different currencies.");
-    return;
-  }
-
-  const estimate = convert(amount,from,to);
-  const message = [
-    "OSWALDO EXCHANGE — MANUAL FIAT REQUEST",
-    "Name: " + name,
-    "Contact: " + contact,
-    "Request: " + direction,
-    "Amount: " + format(amount,8) + " " + from,
-    "Target currency: " + to,
-    "Reference estimate: " +
-      (estimate === null ? "Unavailable" : format(estimate,6) + " " + to),
-    "Rate source: open.er-api.com reference rates, not Binance FX.",
-    "Status: Request only; not paid, booked, or completed.",
-    "Message: " + (notes || "None")
-  ].join("\n");
-
-  const shareUrl = "https://t.me/share/url?url=" +
-    encodeURIComponent("https://t.me/tonyxplus") +
-    "&text=" + encodeURIComponent(message);
-
-  window.open(shareUrl,"_blank","noopener");
-});
-
-loadRates();
-rateTimer = setInterval(loadRates,30 * 60 * 1000);
+fetchPrices();
+setInterval(fetchPrices, 60000);
 </script>
 </body>
 </html>
