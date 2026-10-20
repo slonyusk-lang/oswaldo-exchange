@@ -28,24 +28,25 @@
 <header>
   <h1>⚡ Rx T Exchange <small>MMK P2P</small></h1>
   <nav id="nav">
-    <button data-tab="trade" class="active">💱 Trade</button>
-    <button data-tab="wallet">💼 Wallet</button>
-    <button data-tab="deposit">💰 Deposit</button>
-    <button data-tab="withdraw">🏧 Withdraw</button>
-    <button data-tab="orders">📋 Orders</button>
-    <button data-tab="history">📜 History</button>
-    <button data-tab="settings">⚙️ Settings</button>
-    <button data-tab="support">🆘 Support</button>
+    <button data-tab="trade" class="active" type="button">💱 Trade</button>
+    <button data-tab="wallet" type="button">💼 Wallet</button>
+    <button data-tab="deposit" type="button">💰 Deposit</button>
+    <button data-tab="withdraw" type="button">🏧 Withdraw</button>
+    <button data-tab="orders" type="button">📋 Orders</button>
+    <button data-tab="history" type="button">📜 History</button>
+    <button data-tab="settings" type="button">⚙️ Settings</button>
+    <button data-tab="support" type="button">🆘 Support</button>
   </nav>
 </header>
 
 <main>
+
   <section id="auth" class="tab active">
     <div class="auth-box card">
       <h2 id="authTitle">Create Account</h2>
       <label>Username <input id="authUser" type="text" placeholder="e.g. aung_dev"/></label>
       <label>Password <input id="authPass" type="password" placeholder="min 6 chars"/></label>
-      <button class="primary" id="authBtn">Sign Up</button>
+      <button class="primary" id="authBtn" type="button">Sign Up</button>
       <p class="auth-switch">
         <span id="authSwitchText">Already have an account?</span>
         <span class="link" id="authSwitch">Log in</span>
@@ -55,25 +56,33 @@
   </section>
 
   <div id="mainApp" class="hidden">
+
     <section id="trade" class="tab">
       <h2>Trade</h2>
       <div class="card">
         <div class="row">
           <label>Asset
-            <select id="asset"><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
+            <select id="asset">
+              <option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option>
+            </select>
           </label>
           <label>Side
-            <select id="side"><option value="BUY">Buy (Pay MMK)</option><option value="SELL">Sell (Receive MMK)</option></select>
+            <select id="side">
+              <option value="BUY">Buy (Pay MMK)</option>
+              <option value="SELL">Sell (Receive MMK)</option>
+            </select>
           </label>
         </div>
-        <label>Amount (MMK) <input id="amount" type="number" min="0" placeholder="e.g. 100000"/></label>
-        <button class="primary" id="getRate">Get P2P Rate</button>
+        <label>Amount (MMK)
+          <input id="amount" type="number" min="0" placeholder="e.g. 100000"/>
+        </label>
+        <button class="primary" id="getRate" type="button">Get P2P Rate</button>
         <div class="trade-result">
           <p class="label">Best P2P Price (MMK)</p>
           <div class="price" id="p2pPrice">—</div>
           <p class="label" id="p2pMeta"></p>
           <p>You receive: <b id="receive">—</b></p>
-          <button class="primary" id="placeOrder">Place Order</button>
+          <button class="primary" id="placeOrder" type="button">Place Order</button>
         </div>
       </div>
     </section>
@@ -93,12 +102,14 @@
       <h2>Deposit</h2>
       <div class="card">
         <label>Asset
-          <select id="depAsset"><option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
+          <select id="depAsset">
+            <option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option>
+          </select>
         </label>
         <p class="label">Deposit Address (Mock)</p>
         <p><code id="depAddr">—</code></p>
         <label>Amount <input id="depAmount" type="number" min="0"/></label>
-        <button class="primary" id="doDeposit">Confirm Deposit (Mock)</button>
+        <button class="primary" id="doDeposit" type="button">Confirm Deposit (Mock)</button>
         <p class="label">⚠️ Demo only. Real deposits require a backend.</p>
       </div>
     </section>
@@ -107,12 +118,14 @@
       <h2>Withdraw</h2>
       <div class="card">
         <label>Asset
-          <select id="wdAsset"><option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
+          <select id="wdAsset">
+            <option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option>
+          </select>
         </label>
         <label>Amount <input id="wdAmount" type="number" min="0"/></label>
         <label>Address <input id="wdAddr" type="text" placeholder="Destination address"/></label>
         <p class="label">Fee: 1% (min 500 MMK equivalent)</p>
-        <button class="primary" id="doWithdraw">Request Withdrawal</button>
+        <button class="primary" id="doWithdraw" type="button">Request Withdrawal</button>
       </div>
     </section>
 
@@ -132,9 +145,9 @@
     <section id="settings" class="tab">
       <h2>Settings</h2>
       <div class="card"><p>Username: <b id="settingsUser">—</b></p></div>
-      <div class="card"><p>2FA: <b>Disabled</b> <button class="ghost" onclick="toast('2FA coming soon')">Enable</button></p></div>
-      <div class="card"><p>KYC: <b>Not Verified</b> <button class="ghost" onclick="toast('KYC coming soon')">Start KYC</button></p></div>
-      <div class="card"><button class="danger" id="logoutBtn">Log Out</button></div>
+      <div class="card"><p>2FA: <b>Disabled</b> <button class="ghost" id="btn2fa" type="button">Enable</button></p></div>
+      <div class="card"><p>KYC: <b>Not Verified</b> <button class="ghost" id="btnKyc" type="button">Start KYC</button></p></div>
+      <div class="card"><button class="danger" id="logoutBtn" type="button">Log Out</button></div>
     </section>
 
     <section id="support" class="tab">
@@ -145,6 +158,7 @@
         <p class="label">Rates from Binance P2P (MMK). Refreshed every 60s.</p>
       </div>
     </section>
+
   </div>
 </main>
 
