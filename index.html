@@ -1,392 +1,342 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#07111f">
-<title>Oswaldo Exchange</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rx T Exchange — MMK P2P</title>
 <style>
-:root {
-  --bg:#06101e;
-  --panel:#0d1b2d;
-  --line:#1c3550;
-  --blue:#39baff;
-  --cyan:#64f4ff;
-  --text:#edf7ff;
-  --muted:#8da7bd;
-  --green:#49e2a0;
-  --red:#ff7185;
-}
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  color:var(--text);
-  background:
-    radial-gradient(ellipse at top,#112d4a 0%,transparent 48%),
-    var(--bg);
-  font-family:Arial,Helvetica,sans-serif;
-}
-header {
-  padding:22px 16px;
-  border-bottom:1px solid var(--line);
-  background:#07111ee8;
-}
-.wrap { width:min(100% - 28px,1000px);margin:auto; }
-.brand { font-size:25px;font-weight:900;letter-spacing:1px; }
-.brand span { color:var(--cyan); }
-.sub { color:var(--muted);font-size:12px;margin-top:7px; }
-.pill {
-  display:inline-block;margin-top:12px;padding:6px 10px;
-  border:1px solid #23617d;border-radius:20px;
-  color:var(--cyan);font-size:11px;
-}
-main { padding:22px 0 40px; }
-h2 { font-size:19px;margin:0 0 15px; }
-.panel {
-  background:linear-gradient(145deg,#10233a,#091626);
-  border:1px solid var(--line);border-radius:18px;
-  padding:18px;margin-bottom:16px;
-  box-shadow:0 12px 35px #0002;
-}
-label { display:block;color:var(--muted);font-size:12px;margin:12px 0 7px; }
-input,select,button {
-  width:100%;padding:13px;border-radius:10px;
-  border:1px solid #25445f;background:#071321;color:var(--text);
-  font-size:15px;outline:none;
-}
-input:focus,select:focus { border-color:var(--cyan); }
-.grid { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
-button {
-  cursor:pointer;font-weight:800;border:0;
-  background:linear-gradient(90deg,#1688ff,#36d9e8);
-  color:#03101c;margin-top:14px;
-}
-button.secondary {
-  color:var(--text);background:#14283e;border:1px solid var(--line);
-}
-.result {
-  margin-top:15px;background:#061321;border:1px solid #1a3c54;
-  border-radius:12px;padding:15px;overflow-wrap:anywhere;
-}
-.result small { color:var(--muted);display:block;margin-bottom:8px; }
-.result strong { font-size:25px;color:var(--cyan); }
-.note { color:var(--muted);font-size:12px;line-height:1.6;margin-top:12px; }
-.status { font-size:12px;color:var(--muted);line-height:1.6; }
-.status.good { color:var(--green); }
-.status.bad { color:var(--red); }
-.tablewrap { overflow-x:auto; }
-table { width:100%;border-collapse:collapse;min-width:440px; }
-th,td { padding:12px 9px;text-align:left;border-bottom:1px solid var(--line);font-size:13px; }
-th { color:var(--muted);font-weight:600; }
-td:last-child,th:last-child { text-align:right; }
-.coin { font-weight:800; }
-.pair { color:var(--muted);font-size:11px;margin-top:4px; }
-footer { text-align:center;color:var(--muted);font-size:11px;padding:20px; }
-@media(max-width:520px) {
-  .grid { grid-template-columns:1fr;gap:0; }
-  .panel { padding:15px; }
-  .brand { font-size:22px; }
-}
+  * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+  body { margin: 0; background: #0f1115; color: #e6e6e6; }
+  header { background: linear-gradient(135deg,#0b7a3e,#0e5a2e); padding: 1rem 1.2rem; position: sticky; top: 0; z-index: 10; }
+  header h1 { margin: 0 0 .6rem; font-size: 1.3rem; display: flex; align-items: center; gap: .5rem; }
+  header h1 span { background: #fff; color: #0b7a3e; padding: .1rem .4rem; border-radius: 6px; font-size: .8rem; }
+  nav { display: flex; flex-wrap: wrap; gap: .35rem; }
+  nav button { background: rgba(255,255,255,.12); color: #fff; border: 0; padding: .45rem .8rem; border-radius: 6px; cursor: pointer; font-size: .9rem; }
+  nav button.active { background: #fff; color: #0b7a3e; font-weight: 700; }
+  main { max-width: 960px; margin: 1rem auto; padding: 0 1rem 4rem; }
+  .tab { display: none; }
+  .tab.active { display: block; }
+  h2 { font-size: 1.15rem; margin: 0 0 .8rem; }
+  .card { background: #1a1e26; border: 1px solid #262b35; padding: 1rem; border-radius: 10px; margin-bottom: .8rem; }
+  label { display: block; margin: .5rem 0; font-size: .9rem; color: #b9c0cc; }
+  input, select { width: 100%; padding: .6rem; font-size: 1rem; margin-top: .25rem; background: #0f1115; border: 1px solid #2d3440; color: #e6e6e6; border-radius: 6px; }
+  button.primary { background: #0b7a3e; color: #fff; border: 0; border-radius: 6px; padding: .65rem 1rem; font-size: 1rem; cursor: pointer; margin-top: .5rem; }
+  button.primary:hover { background: #0e9a4e; }
+  button.ghost { background: transparent; border: 1px solid #2d3440; color: #e6e6e6; padding: .5rem .8rem; border-radius: 6px; cursor: pointer; }
+  .row { display: flex; gap: .6rem; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 140px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: .7rem; }
+  .bal { background: #1a1e26; padding: .8rem; border-radius: 8px; border: 1px solid #262b35; }
+  .bal small { color: #8a94a6; display: block; font-size: .75rem; }
+  .bal b { font-size: 1.15rem; }
+  .price { font-size: 1.6rem; font-weight: 700; color: #4ade80; }
+  .label { color: #8a94a6; font-size: .85rem; }
+  .error { color: #f87171; font-size: .9rem; }
+  code { background: #0f1115; padding: .25rem .45rem; border-radius: 4px; font-size: .85rem; color: #4ade80; word-break: break-all; }
+  table { width: 100%; border-collapse: collapse; background: #1a1e26; border-radius: 8px; overflow: hidden; }
+  th, td { padding: .55rem .7rem; border-bottom: 1px solid #262b35; text-align: left; font-size: .88rem; }
+  th { background: #14171d; color: #8a94a6; font-weight: 600; }
+  ul#historyList { list-style: none; padding: 0; margin: 0; }
+  ul#historyList li { background: #1a1e26; margin-bottom: .4rem; padding: .6rem .8rem; border-radius: 6px; font-size: .88rem; border: 1px solid #262b35; }
+  ul#historyList li small { color: #8a94a6; }
+  .toast { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); background: #0b7a3e; color: #fff; padding: .7rem 1.2rem; border-radius: 8px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 99; }
+  .toast.show { opacity: 1; }
+  .badge { display: inline-block; padding: .15rem .5rem; border-radius: 4px; font-size: .75rem; }
+  .badge.buy { background: #0b7a3e33; color: #4ade80; }
+  .badge.sell { background: #b91c1c33; color: #f87171; }
+  .badge.open { background: #ca8a0433; color: #fbbf24; }
 </style>
 </head>
-
 <body>
+
 <header>
-  <div class="wrap">
-    <div class="brand">OSWALDO <span>EXCHANGE</span></div>
-    <div class="sub">MARKET PRICE CONVERTER · LIVE DATA CONNECTION</div>
-    <div class="pill">BINANCE MARKET DATA ONLY</div>
-  </div>
+  <h1>Rx T Exchange <span>MMK P2P</span></h1>
+  <nav id="nav">
+    <button data-tab="trade" class="active">💱 Trade</button>
+    <button data-tab="wallet">💼 Wallet</button>
+    <button data-tab="deposit">💰 Deposit</button>
+    <button data-tab="withdraw">🏧 Withdraw</button>
+    <button data-tab="orders">📋 Orders</button>
+    <button data-tab="history">📜 History</button>
+    <button data-tab="settings">⚙️ Settings</button>
+    <button data-tab="support">🆘 Support</button>
+  </nav>
 </header>
 
-<main class="wrap">
-  <section class="panel">
-    <h2>Currency Converter</h2>
+<main>
 
-    <label for="amount">Amount</label>
-    <input id="amount" type="number" min="0" step="any" value="1">
+  <!-- TRADE -->
+  <section id="trade" class="tab active">
+    <h2>Trade</h2>
+    <div class="card">
+      <div class="row">
+        <label>Asset
+          <select id="asset">
+            <option>USDT</option><option>BTC</option><option>ETH</option>
+          </select>
+        </label>
+        <label>Side
+          <select id="side">
+            <option value="BUY">Buy (Pay MMK)</option>
+            <option value="SELL">Sell (Receive MMK)</option>
+          </select>
+        </label>
+      </div>
+      <label>Amount (MMK)
+        <input id="amount" type="number" min="0" placeholder="e.g. 100000"/>
+      </label>
+      <button class="primary" id="getRate">Get P2P Rate</button>
+      <div style="margin-top:1rem; border-top:1px dashed #2d3440; padding-top:1rem;">
+        <p class="label">Best P2P Price (MMK)</p>
+        <div class="price" id="p2pPrice">—</div>
+        <p class="label" id="p2pMeta"></p>
+        <p>You receive: <b id="receive">—</b></p>
+        <button class="primary" id="placeOrder">Place Order</button>
+      </div>
+    </div>
+  </section>
 
+  <!-- WALLET -->
+  <section id="wallet" class="tab">
+    <h2>Wallet</h2>
     <div class="grid">
-      <div>
-        <label for="from">From</label>
-        <select id="from"></select>
-      </div>
-      <div>
-        <label for="to">To</label>
-        <select id="to"></select>
-      </div>
+      <div class="bal"><small>MMK</small><b id="mmkBal">0</b></div>
+      <div class="bal"><small>USDT</small><b id="usdtBal">0</b></div>
+      <div class="bal"><small>BTC</small><b id="btcBal">0</b></div>
+      <div class="bal"><small>ETH</small><b id="ethBal">0</b></div>
     </div>
-
-    <button id="convertBtn">Convert Market Price</button>
-    <button id="swapBtn" class="secondary">Swap Currencies</button>
-
-    <div class="result" aria-live="polite">
-      <small>Converted market reference</small>
-      <strong id="result">Loading prices…</strong>
-      <div id="rateDetail" class="note"></div>
-    </div>
-
-    <p class="note">
-      Rates are derived only from Binance public Spot market tickers.
-      USD is treated as approximately 1 USDT for this calculation;
-      USD and USDT are not guaranteed to have the same price.
-      These are not direct fiat-to-fiat quotes.
-    </p>
   </section>
 
-  <section class="panel">
-    <h2>Market Prices</h2>
-    <div id="status" class="status">Connecting to market data…</div>
-    <div class="tablewrap" style="margin-top:12px">
-      <table>
-        <thead>
-          <tr><th>Currency</th><th>Binance pair</th><th>Price in USDT*</th></tr>
-        </thead>
-        <tbody id="ratesTable">
-          <tr><td colspan="3">Loading market prices…</td></tr>
-        </tbody>
-      </table>
+  <!-- DEPOSIT -->
+  <section id="deposit" class="tab">
+    <h2>Deposit</h2>
+    <div class="card">
+      <label>Asset
+        <select id="depAsset">
+          <option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option>
+        </select>
+      </label>
+      <p class="label">Deposit Address</p>
+      <p><code id="depAddr">—</code></p>
+      <label>Amount
+        <input id="depAmount" type="number" min="0"/>
+      </label>
+      <button class="primary" id="doDeposit">Confirm Deposit (Mock)</button>
     </div>
-    <button id="refreshBtn" class="secondary">Refresh Prices</button>
-    <p class="note">
-      *USDT is a crypto asset. A currency appears only when Binance returns
-      a matching Spot market ticker. Missing pairs are not estimated using
-      another provider.
-    </p>
   </section>
+
+  <!-- WITHDRAW -->
+  <section id="withdraw" class="tab">
+    <h2>Withdraw</h2>
+    <div class="card">
+      <label>Asset
+        <select id="wdAsset">
+          <option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option>
+        </select>
+      </label>
+      <label>Amount
+        <input id="wdAmount" type="number" min="0"/>
+      </label>
+      <label>Destination Address
+        <input id="wdAddr" type="text" placeholder="Recipient address"/>
+      </label>
+      <p class="label">Fee: 1% (min 500 MMK equivalent)</p>
+      <button class="primary" id="doWithdraw">Request Withdrawal</button>
+    </div>
+  </section>
+
+  <!-- ORDERS -->
+  <section id="orders" class="tab">
+    <h2>Orders</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Type</th><th>Asset</th><th>Amount (MMK)</th><th>Price</th><th>Status</th></tr></thead>
+      <tbody id="ordersBody"><tr><td colspan="6" class="label">No orders yet.</td></tr></tbody>
+    </table>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="history" class="tab">
+    <h2>Transaction History</h2>
+    <ul id="historyList"><li class="label">No transactions yet.</li></ul>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settings" class="tab">
+    <h2>Settings</h2>
+    <div class="card"><p>Username: <b>guest_user</b></p></div>
+    <div class="card"><p>2FA: <b>Disabled</b> <button class="ghost" onclick="toast('2FA setup coming soon')">Enable</button></p></div>
+    <div class="card"><p>KYC: <b>Not Verified</b> <button class="ghost" onclick="toast('KYC flow coming soon')">Start KYC</button></p></div>
+    <div class="card"><p>Base currency: <b>MMK</b></p></div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section id="support" class="tab">
+    <h2>Support</h2>
+    <div class="card">
+      <p>📧 Email: support@rxt-exchange.example</p>
+      <p>💬 Telegram: @rxt_support</p>
+      <p>⏱️ Deposits ~5 min · Withdrawals 1% fee</p>
+      <p class="label">P2P rates come from Binance P2P (MMK market). Rate refreshes on demand.</p>
+    </div>
+  </section>
+
 </main>
 
-<footer>OSWALDO EXCHANGE · Market data is informational, not an exchange guarantee.</footer>
+<div class="toast" id="toast"></div>
 
 <script>
-"use strict";
+/* ---------------- STATE ---------------- */
+const state = {
+  balances: { MMK: 0, USDT: 0, BTC: 0, ETH: 0 },
+  orders: [],
+  history: []
+};
 
-const API = "https://api.binance.com/api/v3/ticker/price";
-
-// These are fiat currency codes we attempt to match to Binance
-// Spot market symbols. A code is shown only if a matching market exists.
-const CURRENCIES = [
-  ["USD","US Dollar"],
-  ["EUR","Euro"],
-  ["GBP","British Pound"],
-  ["TRY","Turkish Lira"],
-  ["BRL","Brazilian Real"],
-  ["AUD","Australian Dollar"],
-  ["CAD","Canadian Dollar"],
-  ["CHF","Swiss Franc"],
-  ["JPY","Japanese Yen"],
-  ["PLN","Polish Zloty"],
-  ["UAH","Ukrainian Hryvnia"],
-  ["RUB","Russian Ruble"],
-  ["NGN","Nigerian Naira"],
-  ["ZAR","South African Rand"],
-  ["MXN","Mexican Peso"],
-  ["THB","Thai Baht"],
-  ["MMK","Myanmar Kyat"]
-];
-
+/* ---------------- HELPERS ---------------- */
 const $ = id => document.getElementById(id);
-let tickerMap = {};
-let marketValues = {};
-let marketPairs = {};
-let updatedAt = null;
-
-function fmt(value) {
-  return Number(value).toLocaleString(undefined, {
-    maximumFractionDigits: 8
-  });
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function logHistory(msg) {
+  state.history.push({ t: new Date().toLocaleString(), msg });
+  render();
+}
+function mockAddress(asset) {
+  return 'rxt-' + asset.toLowerCase() + '-' + Math.random().toString(36).slice(2, 10);
 }
 
-function setStatus(message, kind="") {
-  $("status").textContent = message;
-  $("status").className = "status " + kind;
-}
+/* ---------------- TABS ---------------- */
+$('nav').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-tab]');
+  if (!btn) return;
+  document.querySelectorAll('#nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  $(btn.dataset.tab).classList.add('active');
+});
 
-function initSelectors() {
-  for (const [code, name] of CURRENCIES) {
-    for (const id of ["from", "to"]) {
-      const option = document.createElement("option");
-      option.value = code;
-      option.textContent = code + " — " + name;
-      $(id).appendChild(option);
-    }
-  }
-
-  $("from").value = "USD";
-  $("to").value = "EUR";
-}
-
-function findUsdtValue(code) {
-  if (code === "USD") {
-    // Explicit approximation, not a Binance fiat USD quote.
-    return { value: 1, pair: "USDT reference", approximate: true };
-  }
-
-  const direct = code + "USDT";
-  if (tickerMap[direct] !== undefined) {
-    return { value: tickerMap[direct], pair: direct, approximate: false };
-  }
-
-  const inverse = "USDT" + code;
-  if (tickerMap[inverse] !== undefined && tickerMap[inverse] > 0) {
-    return {
-      value: 1 / tickerMap[inverse],
-      pair: inverse,
-      approximate: false
-    };
-  }
-
-  return null;
-}
-
-function getRate(from, to) {
-  const a = findUsdtValue(from);
-  const b = findUsdtValue(to);
-
-  if (!a || !b || b.value === 0) return null;
-
+/* ---------------- BINANCE P2P ---------------- */
+async function fetchP2P(asset, tradeType = 'BUY') {
+  const url = `https://www.binance.com/bapi/c2c/v1/public/c2c/agent/ad-list?fiat=MMK&asset=${asset}&tradeType=${tradeType}&limit=1`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (!json.data || !json.data.length) throw new Error('No ads found');
+  const ad = json.data[0];
   return {
-    rate: a.value / b.value,
-    fromPair: a.pair,
-    toPair: b.pair,
-    approximate: a.approximate || b.approximate
+    price: parseFloat(ad.adv.price),
+    min: ad.adv.minSingleTransAmount,
+    max: ad.adv.maxSingleTransAmount,
+    nick: ad.advertiser.nickName
   };
 }
 
-function renderTable() {
-  const body = $("ratesTable");
-  body.replaceChildren();
-
-  let shown = 0;
-
-  for (const [code, name] of CURRENCIES) {
-    if (code === "USD") continue;
-
-    const item = findUsdtValue(code);
-    if (!item) continue;
-
-    const tr = document.createElement("tr");
-    const c1 = document.createElement("td");
-    const c2 = document.createElement("td");
-    const c3 = document.createElement("td");
-
-    c1.innerHTML = "";
-    const title = document.createElement("div");
-    title.className = "coin";
-    title.textContent = code;
-    const desc = document.createElement("div");
-    desc.className = "pair";
-    desc.textContent = name;
-    c1.append(title, desc);
-
-    c2.textContent = item.pair;
-    c3.textContent = fmt(item.value);
-
-    tr.append(c1, c2, c3);
-    body.appendChild(tr);
-    shown++;
-  }
-
-  if (shown === 0) {
-    const tr = document.createElement("tr");
-    const td = document.createElement("td");
-    td.colSpan = 3;
-    td.textContent = "No matching fiat-denominated Spot pairs were returned.";
-    tr.appendChild(td);
-    body.appendChild(tr);
-  }
-}
-
-function convert() {
-  const amount = Number($("amount").value);
-  const from = $("from").value;
-  const to = $("to").value;
-
-  if (!Number.isFinite(amount) || amount < 0) {
-    $("result").textContent = "Enter a valid amount";
-    $("rateDetail").textContent = "";
-    return;
-  }
-
-  const data = getRate(from, to);
-
-  if (!data) {
-    $("result").textContent = "Rate unavailable";
-    $("rateDetail").textContent =
-      "No usable Binance Spot market pair was found for " +
-      from + " or " + to + ". No other rate source is used.";
-    return;
-  }
-
-  $("result").textContent = fmt(amount * data.rate) + " " + to;
-  $("rateDetail").textContent =
-    "1 " + from + " ≈ " + fmt(data.rate) + " " + to +
-    " · Pairs: " + data.fromPair + " / " + data.toPair +
-    (data.approximate ? " · Includes USD/USDT approximation." : "") +
-    (updatedAt ? " · Updated " + updatedAt.toLocaleTimeString() : "");
-}
-
-async function fetchPrices() {
-  setStatus("Fetching latest Binance Spot tickers…");
-
+/* ---------------- TRADE ---------------- */
+$('getRate').onclick = async () => {
+  const asset = $('asset').value;
+  const side = $('side').value;
+  $('p2pPrice').textContent = 'Loading…';
+  $('p2pMeta').textContent = '';
   try {
-    const response = await fetch(API, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error("HTTP " + response.status);
+    const r = await fetchP2P(asset, side);
+    $('p2pPrice').textContent = r.price.toLocaleString() + ' MMK';
+    $('p2pMeta').textContent = `Limits: ${r.min} – ${r.max} MMK · Trader: ${r.nick}`;
+    const mmk = parseFloat($('amount').value) || 0;
+    if (mmk > 0) {
+      const recv = side === 'BUY' ? (mmk / r.price) : (mmk * r.price);
+      $('receive').textContent = side === 'BUY'
+        ? recv.toFixed(6) + ' ' + asset
+        : recv.toLocaleString() + ' MMK';
     }
+  } catch (err) {
+    $('p2pPrice').textContent = '—';
+    $('p2pMeta').innerHTML = '<span class="error">' + err.message + ' (CORS or endpoint change)</span>';
+  }
+};
 
-    const data = await response.json();
-    const next = {};
+$('placeOrder').onclick = () => {
+  const asset = $('asset').value;
+  const side = $('side').value;
+  const mmk = parseFloat($('amount').value) || 0;
+  const priceText = $('p2pPrice').textContent.replace(/[^\d.]/g, '');
+  const price = parseFloat(priceText) || 0;
 
-    for (const item of data) {
-      const price = Number(item.price);
-      if (item.symbol && Number.isFinite(price) && price > 0) {
-        next[item.symbol] = price;
-      }
-    }
+  if (mmk <= 0) return toast('Enter an amount');
+  if (!price) return toast('Fetch rate first');
 
-    tickerMap = next;
-    updatedAt = new Date();
+  const order = {
+    id: 'ORD' + Date.now().toString().slice(-6),
+    type: side,
+    asset,
+    amount: mmk,
+    price,
+    status: 'Open'
+  };
+  state.orders.push(order);
+  logHistory(`Order ${order.id} placed — ${side} ${asset} @ ${price} MMK`);
+  toast('Order placed: ' + order.id);
+};
 
-    renderTable();
-    convert();
+/* ---------------- DEPOSIT ---------------- */
+$('depAsset').onchange = e => $('depAddr').textContent = mockAddress(e.target.value);
+$('depAddr').textContent = mockAddress('MMK');
 
-    setStatus(
-      "Connected · Binance Spot market data received · " +
-      updatedAt.toLocaleTimeString(),
-      "good"
-    );
-  } catch (error) {
-    console.error(error);
-    setStatus(
-      "Could not connect to Binance market data. Check your connection and try again.",
-      "bad"
-    );
+$('doDeposit').onclick = () => {
+  const asset = $('depAsset').value;
+  const amt = parseFloat($('depAmount').value) || 0;
+  if (amt <= 0) return toast('Enter amount');
+  state.balances[asset] = (state.balances[asset] || 0) + amt;
+  logHistory(`Deposited ${amt} ${asset}`);
+  toast(`Deposited ${amt} ${asset}`);
+};
 
-    $("result").textContent = "Prices unavailable";
-    $("rateDetail").textContent =
-      "No fallback rate provider is configured.";
+/* ---------------- WITHDRAW ---------------- */
+$('doWithdraw').onclick = () => {
+  const asset = $('wdAsset').value;
+  const amt = parseFloat($('wdAmount').value) || 0;
+  const addr = $('wdAddr').value.trim();
+  if (amt <= 0) return toast('Enter amount');
+  if (!addr) return toast('Enter address');
+  if ((state.balances[asset] || 0) < amt) return toast('Insufficient balance');
+  state.balances[asset] -= amt;
+  logHistory(`Withdrew ${amt} ${asset} → ${addr}`);
+  toast(`Withdrawal requested: ${amt} ${asset}`);
+};
+
+/* ---------------- RENDER ---------------- */
+function render() {
+  $('mmkBal').textContent = state.balances.MMK.toLocaleString();
+  $('usdtBal').textContent = state.balances.USDT;
+  $('btcBal').textContent = state.balances.BTC;
+  $('ethBal').textContent = state.balances.ETH;
+
+  const ob = $('ordersBody');
+  if (!state.orders.length) {
+    ob.innerHTML = '<tr><td colspan="6" class="label">No orders yet.</td></tr>';
+  } else {
+    ob.innerHTML = state.orders.map(o => `<tr>
+      <td>${o.id}</td>
+      <td><span class="badge ${o.type.toLowerCase()}">${o.type}</span></td>
+      <td>${o.asset}</td>
+      <td>${o.amount.toLocaleString()}</td>
+      <td>${o.price.toLocaleString()}</td>
+      <td><span class="badge open">${o.status}</span></td>
+    </tr>`).join('');
+  }
+
+  const hl = $('historyList');
+  if (!state.history.length) {
+    hl.innerHTML = '<li class="label">No transactions yet.</li>';
+  } else {
+    hl.innerHTML = state.history.slice().reverse().map(h =>
+      `<li><small>${h.t}</small> — ${h.msg}</li>`).join('');
   }
 }
-
-initSelectors();
-
-$("convertBtn").addEventListener("click", convert);
-$("swapBtn").addEventListener("click", () => {
-  const oldFrom = $("from").value;
-  $("from").value = $("to").value;
-  $("to").value = oldFrom;
-  convert();
-});
-$("refreshBtn").addEventListener("click", fetchPrices);
-$("amount").addEventListener("input", convert);
-$("from").addEventListener("change", convert);
-$("to").addEventListener("change", convert);
-
-fetchPrices();
-setInterval(fetchPrices, 60000);
+render();
 </script>
 </body>
 </html>
