@@ -200,17 +200,15 @@ body.light .leader-row{background:#fff;border-color:#e2e8f0}
 #btnTheme .icon-sun{display:none}
 body.light #btnTheme .icon-sun{display:inline}
 body.light #btnTheme .icon-moon{display:none}
-/* VIP */
 .vip-card{background:linear-gradient(135deg,#1a2a3a,#0a1220);border:1px solid #fc3;border-radius:10px;padding:1rem;margin-bottom:.6rem;position:relative;overflow:hidden}
 .vip-card::before{content:'💎';position:absolute;right:.5rem;top:.3rem;font-size:3rem;opacity:.2}
 .vip-card h3{color:#fc3;margin:0 0 .3rem;border:0;padding:0;font-size:1.1rem}
 .vip-card .vip-tier{font-size:1.5rem;font-weight:800;color:#fff;margin:.3rem 0}
 .vip-card .vip-progress{background:rgba(255,255,255,.1);height:8px;border-radius:4px;overflow:hidden;margin:.5rem 0}
-.vip-card .vip-progress > div{height:100%;background:linear-gradient(90deg,#fc3,#f80);border-radius:4px;transition:width .5s}
+.vip-card .vip-progress>div{height:100%;background:linear-gradient(90deg,#fc3,#f80);border-radius:4px;transition:width .5s}
 .vip-card .vip-stats{font-size:.78rem;color:#8ab;display:flex;justify-content:space-between}
 .vip-perks{font-size:.78rem;color:#8ab;margin-top:.4rem}
 .vip-perks li{margin:.15rem 0}
-/* Check-in */
 .checkin-card{background:linear-gradient(135deg,#0b7a3e,#0ff22);border-radius:10px;padding:1rem;margin-bottom:.6rem;color:#fff;position:relative}
 .checkin-card h3{color:#fff;border:0;padding:0;margin:0 0 .3rem}
 .checkin-card .streak{font-size:2rem;font-weight:800;line-height:1;margin:.3rem 0}
@@ -221,7 +219,6 @@ body.light #btnTheme .icon-moon{display:none}
 .checkin-day{flex:1;background:rgba(255,255,255,.15);border-radius:4px;padding:.3rem .1rem;text-align:center;font-size:.65rem}
 .checkin-day.done{background:rgba(255,255,255,.6);color:#0b7a3e;font-weight:700}
 .checkin-day.today{background:#fff;color:#0b7a3e;font-weight:700;box-shadow:0 0 8px rgba(255,255,255,.5)}
-/* Chat */
 .chat-fab{position:fixed;bottom:76px;right:1rem;width:52px;height:52px;border-radius:50%;background:#0ff;color:#06080d;border:0;cursor:pointer;font-size:1.5rem;z-index:90;box-shadow:0 4px 16px rgba(0,255,255,.4);display:flex;align-items:center;justify-content:center}
 .chat-panel{position:fixed;bottom:76px;right:1rem;width:320px;max-width:92vw;height:420px;max-height:70vh;background:#0a1220;border:1px solid #1a2a3a;border-radius:12px;z-index:91;display:none;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.6)}
 .chat-panel.show{display:flex}
@@ -234,6 +231,9 @@ body.light #btnTheme .icon-moon{display:none}
 .chat-input-row{display:flex;gap:.3rem;padding:.5rem;border-top:1px solid #1a2a3a}
 .chat-input-row input{flex:1;padding:.4rem;font-size:.8rem}
 .chat-input-row button{padding:.4rem .8rem;background:#0ff;color:#06080d;border:0;border-radius:4px;cursor:pointer;font-weight:600}
+input[type=range]{-webkit-appearance:none;height:6px;background:#1a2a3a;border-radius:3px;outline:none;padding:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#0ff;border-radius:50%;cursor:pointer;box-shadow:0 0 8px #0ff8}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;background:#0ff;border-radius:50%;cursor:pointer;border:0;box-shadow:0 0 8px #0ff8}
 </style>
 </head>
 <body>
@@ -324,20 +324,12 @@ body.light #btnTheme .icon-moon{display:none}
       <h2>Trade</h2>
       <div class="card">
         <div class="row">
-          <label>Asset
-            <select id="asset"><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option><option>SOL</option><option>XRP</option><option>DOGE</option><option>ADA</option></select>
-          </label>
-          <label>Order Type
-            <select id="orderType"><option value="market">Market</option><option value="limit">Limit</option></select>
-          </label>
+          <label>Asset<select id="asset"><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option><option>SOL</option><option>XRP</option><option>DOGE</option><option>ADA</option></select></label>
+          <label>Order Type<select id="orderType"><option value="market">Market</option><option value="limit">Limit</option></select></label>
         </div>
         <div class="row">
-          <label>Side
-            <select id="side"><option value="BUY">Buy (Pay MMK)</option><option value="SELL">Sell (Receive MMK)</option></select>
-          </label>
-          <label id="limitPriceLabel" style="display:none;">Limit Price (MMK)
-            <input id="limitPrice" type="number" min="0" step="0.01"/>
-          </label>
+          <label>Side<select id="side"><option value="BUY">Buy (Pay MMK)</option><option value="SELL">Sell (Receive MMK)</option></select></label>
+          <label id="limitPriceLabel" style="display:none;">Limit Price (MMK)<input id="limitPrice" type="number" min="0" step="0.01"/></label>
         </div>
         <label>Amount (MMK) <input id="amount" type="number" min="0" placeholder="e.g. 100000"/></label>
         <div class="trade-result">
@@ -355,9 +347,7 @@ body.light #btnTheme .icon-moon{display:none}
     <section id="spot" class="tab">
       <h2>Spot Terminal</h2>
       <div class="row" style="margin-bottom:.5rem;">
-        <label>Pair
-          <select id="spotPair"><option value="USDT">USDT/MMK</option><option value="BTC">BTC/MMK</option><option value="ETH">ETH/MMK</option><option value="BNB">BNB/MMK</option><option value="SOL">SOL/MMK</option><option value="XRP">XRP/MMK</option></select>
-        </label>
+        <label>Pair<select id="spotPair"><option value="USDT">USDT/MMK</option><option value="BTC">BTC/MMK</option><option value="ETH">ETH/MMK</option><option value="BNB">BNB/MMK</option><option value="SOL">SOL/MMK</option><option value="XRP">XRP/MMK</option></select></label>
       </div>
       <canvas id="spotChart"></canvas>
       <div class="order-book">
@@ -508,6 +498,13 @@ body.light #btnTheme .icon-moon{display:none}
       <h2>Settings</h2>
       <div class="card"><p>Username: <b id="settingsUser">—</b></p></div>
       <div class="card"><p>Referral Code</p><p><code id="refCode">—</code> <button class="ghost" id="copyRef" type="button" style="width:auto;display:inline;">Copy</button></p></div>
+      <div class="card">
+        <p>🎵 Music Volume</p>
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <input type="range" id="musicVol" min="0" max="1" step="0.05" value="0.85" oninput="setMusicVolume(parseFloat(this.value))"/>
+          <b id="musicVolLabel" style="min-width:44px;text-align:right;color:#0ff;">85%</b>
+        </div>
+      </div>
       <div class="card"><p>2FA: <b>Disabled</b> <button class="ghost" id="btn2fa" type="button">Enable</button></p></div>
       <div class="card"><p>KYC: <b>Not Verified</b> <button class="ghost" id="btnKyc" type="button">Start KYC</button></p></div>
       <div class="card"><button class="ghost" style="width:100%;padding:.6rem;" data-goto="fees">💵 Fee Schedule</button></div>
@@ -548,7 +545,6 @@ const COIN_NAMES={BTC:'Bitcoin',ETH:'Ethereum',USDT:'Tether',BNB:'BNB',SOL:'Sola
 const FALLBACK_MMK={BTC:320000000,ETH:15000000,USDT:4600,BNB:2800000,SOL:250000,XRP:3000,DOGE:800,ADA:2000};
 const EARN_POOLS=[{coin:'USDT',apy:8.5,period:'Flexible'},{coin:'BTC',apy:3.2,period:'30 days'},{coin:'ETH',apy:4.1,period:'Flexible'},{coin:'BNB',apy:6.8,period:'90 days'}];
 
-/* i18n dictionary */
 const I18N={
   en:{notifs:'Notifications',markRead:'Mark all read',checkin:'Daily Check-in',streak:'day streak',claim:'Claim Reward',claimed:'Claimed',claimed_today:'Already claimed today'},
   mm:{notifs:'အသိပေးချက်များ',markRead:'အားလုံးဖတ်ပြီး',checkin:'နေ့စဉ်ဝင်ရောက်မှု',streak:'ရက်ဆက်တိုက်',claim:'ဆုယူရန်',claimed:'ယူပြီး',claimed_today:'ယနေ့ ယူပြီးပါပြီ'}
@@ -557,7 +553,7 @@ let lang=localStorage.getItem('rxt_lang')||'en';
 function t(k){return I18N[lang][k]||I18N.en[k]||k}
 function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
-  document.getElementById('btnLang').textContent=lang==='en'?'EN':'မြ';
+  const b=document.getElementById('btnLang');if(b)b.textContent=lang==='en'?'EN':'မြ';
   renderCheckin();
 }
 
@@ -591,13 +587,23 @@ function applyLang(){
   requestAnimationFrame(draw);
 })();
 
-/* Music engine: 3 modes (off / ambient / burmese) */
+/* Music engine: 4 modes (off / ambient / burmese / anthem) */
 (function musicEngine(){
   let ctx=null,master=null,mode='off',chordTimer=null,burmeseTimer=null;
+  let volume=parseFloat(localStorage.getItem('rxt_vol_music')||'0.85');
   const AMBIENT_CHORDS=[[146.83,174.61,220.00],[130.81,164.81,196.00],[110.00,130.81,164.81],[123.47,155.56,196.00]];
-  // Burmese pentatonic-inspired scale (approximates saung harp / pattala tuning)
   const BURMESE_SCALE=[261.63,293.66,329.63,392.00,440.00,523.25,587.33,659.25];
   let burmeseIdx=0,droneOsc=null,droneGain=null;
+
+  const anthem=new Audio('./kaba-ma-kyei.mp3');
+  anthem.loop=true;
+  anthem.volume=volume;
+  anthem.preload='auto';
+  let anthemAvailable=true;
+
+  anthem.addEventListener('error',()=>{
+    anthemAvailable=false;
+  });
 
   function ensureCtx(){
     if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
@@ -606,7 +612,7 @@ function applyLang(){
   function makeMaster(){
     master=ctx.createGain();
     master.gain.setValueAtTime(0,ctx.currentTime);
-    master.gain.linearRampToValueAtTime(.08,ctx.currentTime+1.5);
+    master.gain.linearRampToValueAtTime(volume,ctx.currentTime+1.5);
     master.connect(ctx.destination);
   }
   function playAmbientChord(){
@@ -616,16 +622,15 @@ function applyLang(){
     chord.forEach(f=>{
       const osc=ctx.createOscillator(),g=ctx.createGain(),flt=ctx.createBiquadFilter();
       osc.type='triangle';osc.frequency.value=f;
-      flt.type='lowpass';flt.frequency.value=900;flt.Q.value=.7;
+      flt.type='lowpass';flt.frequency.value=1200;flt.Q.value=.7;
       g.gain.setValueAtTime(0,ctx.currentTime);
-      g.gain.linearRampToValueAtTime(.12,ctx.currentTime+2);
+      g.gain.linearRampToValueAtTime(.5,ctx.currentTime+2);
       g.gain.linearRampToValueAtTime(0,ctx.currentTime+dur);
       osc.connect(flt);flt.connect(g);g.connect(master);
       osc.start();osc.stop(ctx.currentTime+dur+.1);
     });
     chordTimer=setTimeout(playAmbientChord,(dur-1)*1000);
   }
-  // Burmese: saung harp-like plucked tones + bamboo drone
   function playBurmeseNote(){
     if(mode!=='burmese')return;
     const f=BURMESE_SCALE[burmeseIdx%BURMESE_SCALE.length];
@@ -633,17 +638,15 @@ function applyLang(){
     const osc=ctx.createOscillator(),g=ctx.createGain();
     osc.type='triangle';
     osc.frequency.setValueAtTime(f,ctx.currentTime);
-    // gentle pitch bend (saung-like)
     osc.frequency.linearRampToValueAtTime(f*1.008,ctx.currentTime+.08);
     osc.frequency.linearRampToValueAtTime(f,ctx.currentTime+.5);
     g.gain.setValueAtTime(0,ctx.currentTime);
-    g.gain.linearRampToValueAtTime(.14,ctx.currentTime+.008);
+    g.gain.linearRampToValueAtTime(.7,ctx.currentTime+.008);
     g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+2.2);
     const flt=ctx.createBiquadFilter();
-    flt.type='lowpass';flt.frequency.value=2200;
+    flt.type='lowpass';flt.frequency.value=2800;
     osc.connect(flt);flt.connect(g);g.connect(master);
     osc.start();osc.stop(ctx.currentTime+2.3);
-    // random micro-grace note (pattala-like)
     if(Math.random()>.6){
       setTimeout(()=>{
         if(mode!=='burmese')return;
@@ -651,7 +654,7 @@ function applyLang(){
         const o2=ctx.createOscillator(),g2=ctx.createGain();
         o2.type='sine';o2.frequency.value=f2;
         g2.gain.setValueAtTime(0,ctx.currentTime);
-        g2.gain.linearRampToValueAtTime(.06,ctx.currentTime+.005);
+        g2.gain.linearRampToValueAtTime(.3,ctx.currentTime+.005);
         g2.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.8);
         o2.connect(g2);g2.connect(master);
         o2.start();o2.stop(ctx.currentTime+.9);
@@ -660,18 +663,16 @@ function applyLang(){
     burmeseTimer=setTimeout(playBurmeseNote,300+Math.random()*700);
   }
   function startDrone(){
-    droneOsc=ctx.createOscillator();
-    droneGain=ctx.createGain();
-    droneOsc.type='sine';
-    droneOsc.frequency.value=130.81; // low C
+    droneOsc=ctx.createOscillator();droneGain=ctx.createGain();
+    droneOsc.type='sine';droneOsc.frequency.value=130.81;
     droneGain.gain.setValueAtTime(0,ctx.currentTime);
-    droneGain.gain.linearRampToValueAtTime(.04,ctx.currentTime+3);
+    droneGain.gain.linearRampToValueAtTime(.2,ctx.currentTime+3);
     droneOsc.connect(droneGain);droneGain.connect(master);
     droneOsc.start();
   }
   function stopDrone(){
     if(droneGain){droneGain.gain.linearRampToValueAtTime(0,ctx.currentTime+1);}
-    if(droneOsc){setTimeout(()=>{try{droneOsc.stop();}catch(e){}} ,1100)}
+    if(droneOsc){setTimeout(()=>{try{droneOsc.stop();}catch(e){}},1100)}
     droneOsc=null;droneGain=null;
   }
   function clearTimers(){clearTimeout(chordTimer);clearTimeout(burmeseTimer)}
@@ -680,11 +681,14 @@ function applyLang(){
     if(!b)return;
     if(mode==='off'){b.textContent='🔇';b.style.opacity='.5'}
     else if(mode==='ambient'){b.textContent='🎵';b.style.opacity='1'}
-    else{b.textContent='🪕';b.style.opacity='1'}
+    else if(mode==='burmese'){b.textContent='🪕';b.style.opacity='1'}
+    else if(mode==='anthem'){b.textContent='🇲🇲';b.style.opacity='1'}
   }
   function stop(){
     if(master){master.gain.linearRampToValueAtTime(0,ctx.currentTime+.8);const m=master;setTimeout(()=>{try{m.disconnect()}catch(e){}},900)}
-    clearTimers();stopDrone();mode='off';updateBtn();
+    clearTimers();stopDrone();
+    try{anthem.pause();anthem.currentTime=0;}catch(e){}
+    mode='off';updateBtn();
     localStorage.setItem('rxt_music','off');
   }
   function startAmbient(){
@@ -697,21 +701,43 @@ function applyLang(){
     mode='burmese';burmeseIdx=0;startDrone();playBurmeseNote();updateBtn();
     localStorage.setItem('rxt_music','burmese');
   }
+  function startAnthem(){
+    anthem.volume=volume;
+    anthem.currentTime=0;
+    const p=anthem.play();
+    if(p&&p.catch){
+      p.catch(err=>{
+        toast('Upload kaba-ma-kyei.mp3 to repo root');
+        console.warn('Anthem error:',err);
+        return;
+      });
+    }
+    mode='anthem';updateBtn();
+    localStorage.setItem('rxt_music','anthem');
+  }
   window.cycleMusic=function(){
     if(mode==='off')startAmbient();
     else if(mode==='ambient'){clearTimers();startBurmese();}
+    else if(mode==='burmese'){clearTimers();stopDrone();startAnthem();}
     else stop();
   };
-  // Restore
+  window.setMusicVolume=function(v){
+    volume=Math.max(0,Math.min(1,v));
+    localStorage.setItem('rxt_vol_music',volume.toString());
+    if(master){try{master.gain.linearRampToValueAtTime(volume,ctx.currentTime+.2);}catch(e){}}
+    anthem.volume=volume;
+    const lbl=document.getElementById('musicVolLabel');
+    if(lbl)lbl.textContent=Math.round(volume*100)+'%';
+  };
   document.addEventListener('click',function firstClick(){
     const saved=localStorage.getItem('rxt_music');
     if(saved==='ambient'&&mode==='off'){try{startAmbient()}catch(e){}}
     else if(saved==='burmese'&&mode==='off'){try{startBurmese()}catch(e){}}
+    else if(saved==='anthem'&&mode==='off'){try{startAnthem()}catch(e){}}
     document.removeEventListener('click',firstClick);
   });
 })();
 
-/* State */
 function $(id){return document.getElementById(id)}
 const state={
   balances:{MMK:0,USDT:0,BTC:0,ETH:0,BNB:0,SOL:0,XRP:0,DOGE:0,ADA:0},
@@ -749,7 +775,6 @@ function renderNotifs(){
 }
 window.markRead=function(i){if(state.notifications[i]){state.notifications[i].read=true;saveNotifs();renderNotifs()}};
 
-/* Utils */
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)}
 function logHistory(msg){state.history.push({t:new Date().toLocaleString(),msg});render()}
 function mockAddress(a){return'rxt-'+a.toLowerCase()+'-'+Math.random().toString(36).slice(2,10)}
@@ -771,7 +796,6 @@ function showTab(name){
   if(name==='vip')renderVIP();
 }
 
-/* Binance live prices */
 async function fetchLivePrices(){
   const symbols=MARKET_COINS.filter(c=>c!=='USDT').map(c=>c+'USDT');
   try{
@@ -854,33 +878,24 @@ function drawPieChart(){
   const c=$('pieChart');if(!c)return;
   const dpr=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;
   c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
-  const values=[];
-  let total=state.balances.MMK;
+  const values=[];let total=state.balances.MMK;
   values.push({label:'MMK',v:state.balances.MMK,color:'#0ff'});
   MARKET_COINS.forEach((c2,i)=>{const v=(state.balances[c2]||0)*(state.marketPrices[c2]||0);if(v>0){values.push({label:c2,v,color:['#0f8','#f66','#fc3','#a78bfa','#f472b6','#38bdf8','#fb923c','#22d3ee'][i%8]});total+=v}});
   if(total===0){ctx.fillStyle='#5a7a95';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('No assets yet',w/2,h/2);return}
-  const cx=w*.35,cy=h/2,rad=Math.min(w*.3,h*.4);
-  let ang=-Math.PI/2;
+  const cx=w*.35,cy=h/2,rad=Math.min(w*.3,h*.4);let ang=-Math.PI/2;
   values.forEach(s=>{
     const sweep=(s.v/total)*Math.PI*2;
-    ctx.beginPath();ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,rad,ang,ang+sweep);ctx.closePath();
-    ctx.fillStyle=s.color;ctx.fill();
-    ang+=sweep;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,rad,ang,ang+sweep);ctx.closePath();
+    ctx.fillStyle=s.color;ctx.fill();ang+=sweep;
   });
-  // Donut hole
   ctx.beginPath();ctx.arc(cx,cy,rad*.55,0,Math.PI*2);ctx.fillStyle='#0a1220';ctx.fill();
-  // Legend
-  ctx.font='11px system-ui';ctx.textAlign='left';ctx.textBaseline='middle';
-  let y=20;
+  ctx.font='11px system-ui';ctx.textAlign='left';ctx.textBaseline='middle';let y=20;
   values.slice(0,6).forEach(s=>{
     ctx.fillStyle=s.color;ctx.fillRect(w*.7,y-6,10,10);
-    ctx.fillStyle='#c8d6e5';ctx.fillText(s.label+' '+(s.v/total*100).toFixed(0)+'%',w*.7+16,y);
-    y+=18;
+    ctx.fillStyle='#c8d6e5';ctx.fillText(s.label+' '+(s.v/total*100).toFixed(0)+'%',w*.7+16,y);y+=18;
   });
 }
 
-/* Home */
 function renderHome(){
   let total=state.balances.MMK;
   MARKET_COINS.forEach(c=>{total+=(state.balances[c]||0)*(state.marketPrices[c]||0)});
@@ -892,7 +907,6 @@ function renderHome(){
   renderCheckin();
 }
 
-/* Check-in */
 function renderCheckin(){
   const el=$('checkinCard');if(!el)return;
   const today=new Date().toDateString();
@@ -913,17 +927,13 @@ window.doCheckin=function(){
   const today=new Date().toDateString();
   if(state.lastCheckin===today){toast(t('claimed_today'));return}
   const reward=state.checkinStreak>=7?10000:state.checkinStreak>=5?5000:state.checkinStreak>=3?3000:state.checkinStreak>=1?1500:1000;
-  state.checkinStreak=Math.min(state.checkinStreak+1,7);
-  state.lastCheckin=today;
-  state.balances.MMK+=reward;
-  saveCheckin();
+  state.checkinStreak=Math.min(state.checkinStreak+1,7);state.lastCheckin=today;
+  state.balances.MMK+=reward;saveCheckin();
   logHistory('Daily check-in: +'+fmtMMK(reward)+' MMK');
   pushNotif('🎁','Check-in reward','+'+fmtMMK(reward)+' MMK credited');
-  toast('+'+fmtMMK(reward)+' MMK');
-  renderCheckin();render();
+  toast('+'+fmtMMK(reward)+' MMK');renderCheckin();render();
 };
 
-/* Trade */
 function updateTradePanel(){
   const a=$('asset').value,live=state.marketPrices[a]||0;
   if(!live)return;
@@ -935,7 +945,6 @@ function updateTradePanel(){
   if(mmk>0){const r=side==='BUY'?buy:sell;const recv=side==='BUY'?(mmk/r):(mmk*r);$('receive').textContent=side==='BUY'?recv.toFixed(6)+' '+a:fmtMMK(recv)+' MMK'}
 }
 
-/* Spot */
 function renderSpot(){
   const pair=$('spotPair').value;
   const base=state.marketPrices[pair]||0;if(!base)return;
@@ -982,7 +991,6 @@ function checkLimitOrders(){
   render();
 }
 
-/* P2P */
 function renderP2P(){
   const coin=$('p2pCoin').value,side=$('p2pSide').value;
   const base=state.marketPrices[coin]||FALLBACK_MMK[coin]||4600;
@@ -1001,15 +1009,12 @@ window.p2pOrder=function(nick,price,coin,side){
   if(!s)return;const mmk=parseFloat(s);
   if(!mmk||mmk<10000){toast('Invalid amount');return}
   const o={id:'P2P'+Date.now().toString().slice(-6),type:side,asset:coin,amount:mmk,price,status:'Open',orderType:'p2p'};
-  state.orders.push(o);
-  state.volume30d+=mmk;saveVol();
+  state.orders.push(o);state.volume30d+=mmk;saveVol();
   logHistory('P2P '+side+' '+coin+' with '+nick);
   pushNotif('🤝','P2P order',side+' '+coin+' @ '+fmtMMK(price)+' MMK');
-  toast('Order placed with '+nick);
-  showTab('orders');
+  toast('Order placed with '+nick);showTab('orders');
 };
 
-/* Convert */
 function updateConvert(){
   const from=$('convFrom').value,to=$('convTo').value,amt=parseFloat($('convAmount').value)||0;
   if(from===to){$('convRate').textContent='Choose different coins';$('convResult').textContent='—';return}
@@ -1033,7 +1038,6 @@ function doConvert(){
   toast('Converted!');render();updateConvert();
 }
 
-/* Earn */
 function renderEarn(){
   $('earnPools').innerHTML=EARN_POOLS.map(p=>'<div class="earn-pool"><div class="pool-head"><div class="pool-coin">'+p.coin+'</div><div class="pool-apy">'+p.apy+'% APY</div></div><div class="pool-info">'+p.period+' · Daily rewards</div><div class="pool-actions"><input type="number" id="earnAmt_'+p.coin+'" placeholder="Amount" min="0"/><button class="success" onclick="stake(\''+p.coin+'\','+p.apy+')">Stake</button><button class="ghost" onclick="unstake(\''+p.coin+'\')">Unstake</button></div><p class="label" style="margin-top:.3rem;">Staked: <b>'+(state.staked[p.coin]||0)+'</b> '+p.coin+'</p></div>').join('');
 }
@@ -1055,7 +1059,6 @@ window.unstake=function(coin){
   toast('Unstaked '+amt+' '+coin);render();renderEarn();
 };
 
-/* VIP */
 const VIP_TIERS=[
   {name:'Bronze',min:0,icon:'🥉'},
   {name:'Silver',min:1000000,icon:'🥈'},
@@ -1063,16 +1066,9 @@ const VIP_TIERS=[
   {name:'Platinum',min:20000000,icon:'💠'},
   {name:'Diamond',min:100000000,icon:'💎'}
 ];
-function getVipTier(vol){
-  let t=VIP_TIERS[0];
-  for(const v of VIP_TIERS){if(vol>=v.min)t=v}
-  return t;
-}
+function getVipTier(vol){let t=VIP_TIERS[0];for(const v of VIP_TIERS){if(vol>=v.min)t=v}return t}
 function renderVIP(){
-  const vol=state.volume30d;
-  const tier=getVipTier(vol);
-  const idx=VIP_TIERS.indexOf(tier);
-  const next=VIP_TIERS[idx+1];
+  const vol=state.volume30d,tier=getVipTier(vol),idx=VIP_TIERS.indexOf(tier),next=VIP_TIERS[idx+1];
   $('vipTier').textContent=tier.icon+' '+tier.name;
   $('vipVolume').textContent='30d Vol: '+fmtMMK(vol)+' MMK';
   if(next){
@@ -1080,13 +1076,12 @@ function renderVIP(){
     $('vipProgress').style.width=pct+'%';
     $('vipNext').textContent='Next: '+next.name+' at '+fmtMMK(next.min);
   }else{$('vipProgress').style.width='100%';$('vipNext').textContent='Max tier reached!'}
-  $('vipTiers').innerHTML=VIP_TIERS.map((v,i)=>{
+  $('vipTiers').innerHTML=VIP_TIERS.map(v=>{
     const active=v.name===tier.name?'style="border-color:#fc3"':'';
     return'<div class="leader-row" '+active+'><div class="leader-rank">'+v.icon+'</div><div class="leader-info"><div class="leader-name">'+v.name+'</div><div class="leader-stats">Min volume: '+fmtMMK(v.min)+' MMK</div></div></div>';
   }).join('');
 }
 
-/* Leaderboard */
 function renderLeaderboard(){
   const tr=[
     {name:'AungTrader',e:'🦁',vol:52400000,roi:34.2},
@@ -1105,7 +1100,6 @@ function renderLeaderboard(){
   }).join('');
 }
 
-/* Alerts */
 function renderAlerts(){
   const el=$('alertList');
   if(!state.alerts.length){el.innerHTML='<span class="label">No alerts set.</span>';return}
@@ -1123,7 +1117,6 @@ function checkAlerts(){
   }
 }
 
-/* Coin modal */
 function showCoinModal(coin){
   const p=state.marketPrices[coin]||0,h=state.priceHistory24h[coin]||{},fav=state.favorites.includes(coin);
   $('modalBody').innerHTML='<button class="close" onclick="closeModal()">✕</button><h3>'+coin+' — '+(COIN_NAMES[coin]||'')+'</h3><p class="price">'+fmtMMK(p)+' MMK</p><p class="label">≈ '+(p/USD_TO_MMK).toFixed(6)+' USD</p><div class="row" style="margin-top:.8rem;"><div class="bal"><small>24h Open</small><b>'+fmtMMK(h.open||0)+'</b></div><div class="bal"><small>24h High</small><b>'+fmtMMK(h.high||0)+'</b></div><div class="bal"><small>24h Low</small><b>'+fmtMMK(h.low||0)+'</b></div><div class="bal"><small>24h Vol</small><b>'+fmtMMK(h.vol||0)+'</b></div></div><div class="row" style="margin-top:.8rem;"><button class="primary" onclick="quickTrade(\''+coin+'\',\'BUY\')">Buy</button><button class="primary" onclick="quickTrade(\''+coin+'\',\'SELL\')">Sell</button></div><button class="ghost" style="width:100%;margin-top:.5rem;" onclick="toggleFav(\''+coin+'\');closeModal()">'+(fav?'★ Remove fav':'☆ Add fav')+'</button>';
@@ -1133,7 +1126,6 @@ function closeModal(){$('modalOverlay').classList.remove('show')}
 window.quickTrade=function(c,s){closeModal();$('asset').value=c;$('side').value=s;showTab('trade');updateTradePanel()};
 window.toggleFav=function(c){const i=state.favorites.indexOf(c);if(i>=0)state.favorites.splice(i,1);else state.favorites.push(c);saveFavs();renderMarkets(state.marketPrices,state.marketSource);renderHome()};
 
-/* Chat */
 function initChat(){
   const msgs=$('chatMessages');
   msgs.innerHTML='<div class="chat-msg bot">👋 Hello! Welcome to Rx T Exchange support. How can I help you today?</div>';
@@ -1142,14 +1134,13 @@ function initChat(){
     msgs.innerHTML+='<div class="chat-msg user">'+txt.replace(/</g,'&lt;')+'</div>';
     inp.value='';msgs.scrollTop=msgs.scrollHeight;
     setTimeout(()=>{
-      const replies=['Thanks for reaching out! A support agent will reply shortly.','You can deposit MMK via KBZ Pay or Wave Money.','Withdrawals process in 5-30 minutes.','Please complete KYC to unlock higher limits.','Live rates refresh every 15 seconds from Binance.','Your issue has been noted. Reference: #'+Math.floor(Math.random()*99999)];
+      const replies=['Thanks! A support agent will reply shortly.','You can deposit MMK via KBZ Pay or Wave Money.','Withdrawals process in 5-30 minutes.','Please complete KYC to unlock higher limits.','Live rates refresh every 15 seconds from Binance.','Your issue has been noted. Reference: #'+Math.floor(Math.random()*99999)];
       msgs.innerHTML+='<div class="chat-msg bot">'+replies[Math.floor(Math.random()*replies.length)]+'</div>';
       msgs.scrollTop=msgs.scrollHeight;
     },900);
   };
 }
 
-/* Auth */
 let isLoginMode=false;
 function enterApp(username){
   $('auth').classList.remove('active');$('mainApp').classList.remove('hidden');
@@ -1161,15 +1152,14 @@ function enterApp(username){
   refreshAll();
 }
 
-/* DOM ready */
 document.addEventListener('DOMContentLoaded',function(){
   if(localStorage.getItem('rxt_theme')==='light')document.body.classList.add('light');
-  applyLang();
-  initChat();
+  applyLang();initChat();
 
   $('btnLang').addEventListener('click',()=>{lang=lang==='en'?'mm':'en';localStorage.setItem('rxt_lang',lang);applyLang();toast(lang==='en'?'English':'မြန်မာ')});
   $('btnTheme').addEventListener('click',()=>{document.body.classList.toggle('light');localStorage.setItem('rxt_theme',document.body.classList.contains('light')?'light':'dark')});
-  $('btnMusic').addEventListener('click',()=>{window.cycleMusic();const m=localStorage.getItem('rxt_music');toast(m==='ambient'?'🎵 Ambient':m==='burmese'?'🪕 Burmese':m==='off'?'🔇 Off':'')});
+  $('btnMusic').addEventListener('click',()=>{window.cycleMusic();const m=localStorage.getItem('rxt_music');toast(m==='ambient'?'🎵 Ambient':m==='burmese'?'🪕 Burmese':m==='anthem'?'🇲🇲 Kaba Ma Kyei':m==='off'?'🔇 Off':'')});
+  setTimeout(()=>{const v=localStorage.getItem('rxt_vol_music');if(v&&document.getElementById('musicVol')){document.getElementById('musicVol').value=v;document.getElementById('musicVolLabel').textContent=Math.round(parseFloat(v)*100)+'%';}},100);
   $('btnNotif').addEventListener('click',e=>{e.stopPropagation();$('notifPanel').classList.toggle('show')});
   $('markAllRead').addEventListener('click',()=>{state.notifications.forEach(n=>n.read=true);saveNotifs();renderNotifs()});
   document.addEventListener('click',e=>{if(!e.target.closest('#notifPanel')&&!e.target.closest('#btnNotif'))$('notifPanel').classList.remove('show')});
@@ -1206,7 +1196,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
   $('marketSearch').addEventListener('input',()=>renderMarkets(state.marketPrices,state.marketSource));
   $('marketGrid').addEventListener('click',e=>{const s=e.target.closest('[data-star]');if(s){toggleFav(s.dataset.star);return}const c=e.target.closest('[data-coin]');if(c)showCoinModal(c.dataset.coin)});
-  ['topMovers'].forEach(id=>{const el=$(id);if(el)el.addEventListener('click',e=>{const c=e.target.closest('[data-coin]');if(c)showCoinModal(c.dataset.coin)})});
+  const tm=$('topMovers');if(tm)tm.addEventListener('click',e=>{const c=e.target.closest('[data-coin]');if(c)showCoinModal(c.dataset.coin)});
   $('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))closeModal()});
 
   $('asset').addEventListener('change',updateTradePanel);
@@ -1277,7 +1267,6 @@ document.addEventListener('DOMContentLoaded',function(){
   setInterval(refreshAll,15000);
 });
 
-/* Render */
 function render(){
   ['MMK','USDT','BTC','ETH','BNB','SOL','XRP','DOGE','ADA'].forEach(c=>{const el=$(c.toLowerCase()+'Bal');if(el)el.textContent=c==='MMK'?fmtMMK(state.balances.MMK):(state.balances[c]||0)});
   const sg=$('stakedGrid');
