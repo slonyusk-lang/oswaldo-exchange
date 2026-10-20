@@ -167,6 +167,7 @@ ul#historyList li small { color: #5a7a95; }
 <header>
   <h1>⚡ Rx T Exchange <small>MMK</small></h1>
   <div class="header-icons">
+    <button id="btnMusic" title="Music" style="opacity:0.5;">🔇</button>
     <button id="btnAlerts" title="Alerts">🔔<span class="dot" id="alertDot" style="display:none;"></span></button>
     <button id="btnSettings" title="Settings">⚙️</button>
   </div>
@@ -526,6 +527,83 @@ const FALLBACK_MMK = {
     requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
+})();
+
+/* ============================================================
+   Background Music — Web Audio ambient pad
+   ============================================================ */
+(function musicEngine() {
+  let ctx = null, master = null, playing = false, timer = null;
+
+  const CHORDS = [
+    [146.83, 174.61, 220.00],
+    [130.81, 164.81, 196.00],
+    [110.00, 130.81, 164.81],
+    [123.47, 155.56, 196.00]
+  ];
+
+  function playChord() {
+    if (!playing) return;
+    const chord = CHORDS[Math.floor(Math.random() * CHORDS.length)];
+    const dur = 7 + Math.random() * 3;
+
+    chord.forEach(freq => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      filter.type = 'lowpass';
+      filter.frequency.value = 900;
+      filter.Q.value = 0.7;
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 2);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+      osc.start();
+      osc.stop(ctx.currentTime + dur + 0.1);
+    });
+
+    timer = setTimeout(playChord, (dur - 1) * 1000);
+  }
+
+  function start() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    master = ctx.createGain();
+    master.gain.setValueAtTime(0, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 2);
+    master.connect(ctx.destination);
+    playing = true;
+    playChord();
+    const btn = document.getElementById('btnMusic');
+    if (btn) { btn.textContent = '🎵'; btn.style.opacity = '1'; }
+  }
+
+  function stop() {
+    if (master) {
+      master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      setTimeout(() => {
+        if (master) { master.disconnect(); master = null; }
+      }, 1100);
+    }
+    clearTimeout(timer);
+    playing = false;
+    const btn = document.getElementById('btnMusic');
+    if (btn) { btn.textContent = '🔇'; btn.style.opacity = '0.5'; }
+  }
+
+  window.toggleMusic = function () {
+    if (playing) { stop(); localStorage.setItem('rxt_music', 'off'); }
+    else { start(); localStorage.setItem('rxt_music', 'on'); }
+  };
+
+  document.addEventListener('click', function firstClick() {
+    if (localStorage.getItem('rxt_music') === 'on' && !playing) start();
+    document.removeEventListener('click', firstClick);
+  });
 })();
 
 /* ============================================================
@@ -967,6 +1045,7 @@ document.addEventListener('DOMContentLoaded', function () {
     showTab(btn.dataset.tab);
   });
 
+  $('btnMusic').addEventListener('click', window.toggleMusic);
   $('btnAlerts').addEventListener('click', () => showTab('alerts'));
   $('btnSettings').addEventListener('click', () => showTab('settings'));
 
