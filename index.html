@@ -3,32 +3,134 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Rx T Exchange — MMK P2P</title>
-<link rel="stylesheet" href="styles.css"/>
+<title>Rx T Exchange — MMK Live Markets</title>
+<style>
+* { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+body { margin: 0; background: #06080d; color: #c8d6e5; overflow-x: hidden; }
+canvas#cyber-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+/* Ticker */
+.ticker-wrap { position: relative; z-index: 2; background: #0a1220; border-bottom: 1px solid #1a2a3a; overflow: hidden; padding: .4rem 0; }
+.ticker { display: flex; gap: 2rem; animation: scroll 40s linear infinite; white-space: nowrap; font-size: .8rem; color: #5a7a95; }
+.ticker span b { color: #0ff; font-weight: 600; }
+.ticker span b.up { color: #0f8; }
+.ticker span b.down { color: #f66; }
+.ticker span small { font-size: .7rem; margin-left: .2rem; }
+.ticker span small.up { color: #0f8; }
+.ticker span small.down { color: #f66; }
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* Header */
+header { position: relative; z-index: 2; background: rgba(6,8,13,.85); backdrop-filter: blur(8px); border-bottom: 1px solid #1a2a3a; padding: .8rem 1rem; }
+header h1 { margin: 0 0 .5rem; font-size: 1.2rem; color: #0ff; letter-spacing: 1px; text-shadow: 0 0 8px #0ff8; }
+header h1 small { font-size: .6rem; color: #5a7a95; }
+nav { display: flex; flex-wrap: wrap; gap: .3rem; }
+nav button { background: #0a1220; color: #8ab; border: 1px solid #1a2a3a; padding: .35rem .7rem; border-radius: 4px; cursor: pointer; font-size: .85rem; transition: .2s; }
+nav button.active { background: #0ff22; border-color: #0ff; color: #0ff; text-shadow: 0 0 6px #0ff8; }
+
+/* Main */
+main { position: relative; z-index: 2; max-width: 960px; margin: 1rem auto; padding: 0 1rem 4rem; }
+.tab { display: none; }
+.tab.active { display: block; }
+h2 { font-size: 1.05rem; color: #0ff; border-left: 3px solid #0ff; padding-left: .6rem; margin: 0 0 .8rem; }
+.card { background: rgba(10,18,32,.85); border: 1px solid #1a2a3a; padding: 1rem; border-radius: 8px; margin-bottom: .8rem; backdrop-filter: blur(4px); }
+
+label { display: block; margin: .4rem 0; font-size: .85rem; color: #7a9ab5; }
+input, select { width: 100%; padding: .55rem; font-size: .95rem; margin-top: .2rem; background: #06080d; border: 1px solid #1a2a3a; color: #c8d6e5; border-radius: 4px; }
+input:focus, select:focus { outline: none; border-color: #0ff; box-shadow: 0 0 6px #0ff4; }
+
+button.primary { background: #0ff22; color: #0ff; border: 1px solid #0ff; border-radius: 4px; padding: .6rem 1rem; font-size: .95rem; cursor: pointer; margin-top: .5rem; transition: .2s; width: 100%; }
+button.primary:hover { background: #0ff44; box-shadow: 0 0 12px #0ff6; }
+button.ghost { background: transparent; border: 1px solid #1a2a3a; color: #8ab; padding: .3rem .8rem; border-radius: 4px; cursor: pointer; font-size: .8rem; }
+button.danger { background: #f003; border: 1px solid #f66; color: #f66; padding: .5rem 1rem; border-radius: 4px; cursor: pointer; width: 100%; }
+
+.row { display: flex; gap: .6rem; flex-wrap: wrap; }
+.row > * { flex: 1; min-width: 140px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: .6rem; }
+.bal { background: rgba(10,18,32,.9); padding: .7rem; border-radius: 6px; border: 1px solid #1a2a3a; }
+.bal small { color: #5a7a95; display: block; font-size: .72rem; }
+.bal b { font-size: 1.1rem; color: #0ff; }
+
+.price { font-size: 1.5rem; font-weight: 700; color: #0f8; text-shadow: 0 0 8px #0f86; }
+.price.sell { color: #f66; text-shadow: 0 0 8px #f666; }
+.label { color: #5a7a95; font-size: .8rem; }
+.center { text-align: center; }
+code { background: #06080d; padding: .2rem .4rem; border-radius: 3px; font-size: .8rem; color: #0f8; border: 1px solid #1a2a3a; word-break: break-all; }
+.trade-result { margin-top: .8rem; border-top: 1px dashed #1a2a3a; padding-top: .8rem; }
+
+table { width: 100%; border-collapse: collapse; background: rgba(10,18,32,.85); border-radius: 6px; overflow: hidden; }
+th, td { padding: .5rem .6rem; border-bottom: 1px solid #1a2a3a; text-align: left; font-size: .82rem; }
+th { background: #0a1220; color: #5a7a95; font-weight: 500; }
+
+ul#historyList { list-style: none; padding: 0; margin: 0; }
+ul#historyList li { background: rgba(10,18,32,.85); margin-bottom: .3rem; padding: .5rem .7rem; border-radius: 4px; font-size: .82rem; border: 1px solid #1a2a3a; }
+ul#historyList li small { color: #5a7a95; }
+
+.badge { display: inline-block; padding: .12rem .4rem; border-radius: 3px; font-size: .72rem; }
+.badge.buy { background: #0f83; color: #0f8; }
+.badge.sell { background: #f003; color: #f66; }
+.badge.open { background: #fa03; color: #fb3; }
+
+.toast { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); background: #0ff22; color: #0ff; border: 1px solid #0ff; padding: .6rem 1.2rem; border-radius: 6px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 99; font-size: .9rem; }
+.toast.show { opacity: 1; }
+.error { color: #f66; font-size: .82rem; }
+.hidden { display: none !important; }
+.auth-box { max-width: 400px; margin: 2rem auto; }
+.auth-box h2 { text-align: center; border: 0; padding: 0; }
+.auth-switch { text-align: center; margin-top: .8rem; font-size: .85rem; }
+.link { color: #0ff; cursor: pointer; text-decoration: underline; }
+
+/* Market grid + animations */
+.market-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: .7rem; }
+.market-card { background: rgba(10,18,32,.9); border: 1px solid #1a2a3a; border-radius: 8px; padding: .8rem; position: relative; overflow: hidden; transition: border-color .3s, box-shadow .3s; }
+.market-card.up { border-color: #0f8; box-shadow: 0 0 12px #0f84; animation: pulseUp .7s; }
+.market-card.down { border-color: #f66; box-shadow: 0 0 12px #f664; animation: pulseDown .7s; }
+.market-card .coin-name { font-size: .82rem; color: #8ab; }
+.market-card .coin-symbol { font-weight: 700; color: #0ff; }
+.market-card .coin-price { font-size: 1.15rem; font-weight: 700; margin: .35rem 0; }
+.market-card .coin-change { font-size: .75rem; }
+.market-card .coin-change.up { color: #0f8; }
+.market-card .coin-change.down { color: #f66; }
+.market-card .coin-change.flat { color: #5a7a95; }
+
+@keyframes pulseUp {
+  0% { background: rgba(15, 255, 136, 0.3); }
+  100% { background: rgba(10,18,32,.9); }
+}
+@keyframes pulseDown {
+  0% { background: rgba(255, 102, 102, 0.3); }
+  100% { background: rgba(10,18,32,.9); }
+}
+</style>
 </head>
 <body>
 
 <canvas id="cyber-bg"></canvas>
 
+<!-- Live ticker -->
 <div class="ticker-wrap">
-  <div class="ticker" id="ticker">
-    <span>USDT/MMK <b id="tk-usdt">loading…</b></span>
-    <span>BTC/MMK <b id="tk-btc">loading…</b></span>
-    <span>ETH/MMK <b id="tk-eth">loading…</b></span>
-    <span>BNB/MMK <b id="tk-bnb">loading…</b></span>
-    <span>Source: Binance P2P</span>
-    <span>USDT/MMK <b id="tk-usdt2">loading…</b></span>
-    <span>BTC/MMK <b id="tk-btc2">loading…</b></span>
-    <span>ETH/MMK <b id="tk-eth2">loading…</b></span>
-    <span>BNB/MMK <b id="tk-bnb2">loading…</b></span>
-    <span>Source: Binance P2P</span>
+  <div class="ticker">
+    <span>BTC <b id="tk-btc">—</b><small id="chg-btc"></small></span>
+    <span>ETH <b id="tk-eth">—</b><small id="chg-eth"></small></span>
+    <span>USDT <b id="tk-usdt">—</b><small id="chg-usdt"></small></span>
+    <span>BNB <b id="tk-bnb">—</b><small id="chg-bnb"></small></span>
+    <span>SOL <b id="tk-sol">—</b><small id="chg-sol"></small></span>
+    <span>XRP <b id="tk-xrp">—</b><small id="chg-xrp"></small></span>
+    <span>Live · Binance</span>
+    <span>BTC <b id="tk-btc2">—</b><small id="chg-btc2"></small></span>
+    <span>ETH <b id="tk-eth2">—</b><small id="chg-eth2"></small></span>
+    <span>USDT <b id="tk-usdt2">—</b><small id="chg-usdt2"></small></span>
+    <span>BNB <b id="tk-bnb2">—</b><small id="chg-bnb2"></small></span>
+    <span>SOL <b id="tk-sol2">—</b><small id="chg-sol2"></small></span>
+    <span>XRP <b id="tk-xrp2">—</b><small id="chg-xrp2"></small></span>
   </div>
 </div>
 
 <header>
-  <h1>⚡ Rx T Exchange <small>MMK P2P</small></h1>
+  <h1>⚡ Rx T Exchange <small>MMK · Live</small></h1>
   <nav id="nav">
     <button data-tab="trade" class="active" type="button">💱 Trade</button>
+    <button data-tab="markets" type="button">📈 Markets</button>
     <button data-tab="wallet" type="button">💼 Wallet</button>
     <button data-tab="deposit" type="button">💰 Deposit</button>
     <button data-tab="withdraw" type="button">🏧 Withdraw</button>
@@ -41,6 +143,7 @@
 
 <main>
 
+  <!-- AUTH -->
   <section id="auth" class="tab active">
     <div class="auth-box card">
       <h2 id="authTitle">Create Account</h2>
@@ -57,13 +160,16 @@
 
   <div id="mainApp" class="hidden">
 
+    <!-- TRADE -->
     <section id="trade" class="tab">
       <h2>Trade</h2>
       <div class="card">
         <div class="row">
           <label>Asset
             <select id="asset">
-              <option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option>
+              <option>USDT</option><option>BTC</option><option>ETH</option>
+              <option>BNB</option><option>SOL</option><option>XRP</option>
+              <option>DOGE</option><option>ADA</option>
             </select>
           </label>
           <label>Side
@@ -76,10 +182,18 @@
         <label>Amount (MMK)
           <input id="amount" type="number" min="0" placeholder="e.g. 100000"/>
         </label>
-        <button class="primary" id="getRate" type="button">Get P2P Rate</button>
+        <button class="primary" id="getRate" type="button">Get Live Rates</button>
         <div class="trade-result">
-          <p class="label">Best P2P Price (MMK)</p>
-          <div class="price" id="p2pPrice">—</div>
+          <div class="row">
+            <div>
+              <p class="label">🟢 BUY Price (You Pay)</p>
+              <div class="price" id="p2pBuy">—</div>
+            </div>
+            <div>
+              <p class="label">🔴 SELL Price (You Get)</p>
+              <div class="price sell" id="p2pSell">—</div>
+            </div>
+          </div>
           <p class="label" id="p2pMeta"></p>
           <p>You receive: <b id="receive">—</b></p>
           <button class="primary" id="placeOrder" type="button">Place Order</button>
@@ -87,6 +201,14 @@
       </div>
     </section>
 
+    <!-- MARKETS -->
+    <section id="markets" class="tab">
+      <h2>Live Markets</h2>
+      <p class="label" id="marketsUpdated">Loading prices…</p>
+      <div class="market-grid" id="marketGrid"></div>
+    </section>
+
+    <!-- WALLET -->
     <section id="wallet" class="tab">
       <h2>Wallet</h2>
       <div class="grid">
@@ -95,15 +217,21 @@
         <div class="bal"><small>BTC</small><b id="btcBal">0</b></div>
         <div class="bal"><small>ETH</small><b id="ethBal">0</b></div>
         <div class="bal"><small>BNB</small><b id="bnbBal">0</b></div>
+        <div class="bal"><small>SOL</small><b id="solBal">0</b></div>
+        <div class="bal"><small>XRP</small><b id="xrpBal">0</b></div>
+        <div class="bal"><small>DOGE</small><b id="dogeBal">0</b></div>
+        <div class="bal"><small>ADA</small><b id="adaBal">0</b></div>
       </div>
     </section>
 
+    <!-- DEPOSIT -->
     <section id="deposit" class="tab">
       <h2>Deposit</h2>
       <div class="card">
         <label>Asset
           <select id="depAsset">
-            <option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option>
+            <option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option>
+            <option>BNB</option><option>SOL</option><option>XRP</option>
           </select>
         </label>
         <p class="label">Deposit Address (Mock)</p>
@@ -114,12 +242,14 @@
       </div>
     </section>
 
+    <!-- WITHDRAW -->
     <section id="withdraw" class="tab">
       <h2>Withdraw</h2>
       <div class="card">
         <label>Asset
           <select id="wdAsset">
-            <option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option>
+            <option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option>
+            <option>BNB</option><option>SOL</option><option>XRP</option>
           </select>
         </label>
         <label>Amount <input id="wdAmount" type="number" min="0"/></label>
@@ -129,6 +259,7 @@
       </div>
     </section>
 
+    <!-- ORDERS -->
     <section id="orders" class="tab">
       <h2>Orders</h2>
       <table>
@@ -137,11 +268,13 @@
       </table>
     </section>
 
+    <!-- HISTORY -->
     <section id="history" class="tab">
       <h2>Transaction History</h2>
       <ul id="historyList"><li class="label">No transactions yet.</li></ul>
     </section>
 
+    <!-- SETTINGS -->
     <section id="settings" class="tab">
       <h2>Settings</h2>
       <div class="card"><p>Username: <b id="settingsUser">—</b></p></div>
@@ -150,12 +283,13 @@
       <div class="card"><button class="danger" id="logoutBtn" type="button">Log Out</button></div>
     </section>
 
+    <!-- SUPPORT -->
     <section id="support" class="tab">
       <h2>Support</h2>
       <div class="card">
         <p>📧 support@rxt-exchange.example</p>
         <p>💬 Telegram: @rxt_support</p>
-        <p class="label">Rates from Binance P2P (MMK). Refreshed every 60s.</p>
+        <p class="label">Live prices from Binance Spot API. Converted to MMK using USD_TO_MMK constant. Refreshed every 15s.</p>
       </div>
     </section>
 
@@ -163,6 +297,432 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="app.js"></script>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const USD_TO_MMK = 4500; // ← Update to today's USD/MMK rate
+
+const MARKET_COINS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'DOGE', 'ADA'];
+const TICKER_COINS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP'];
+
+const COIN_NAMES = {
+  BTC: 'Bitcoin', ETH: 'Ethereum', USDT: 'Tether', BNB: 'BNB',
+  SOL: 'Solana', XRP: 'XRP', DOGE: 'Dogecoin', ADA: 'Cardano'
+};
+
+const FALLBACK_MMK = {
+  BTC: 320000000, ETH: 15000000, USDT: 4600, BNB: 2800000,
+  SOL: 250000, XRP: 3000, DOGE: 800, ADA: 2000
+};
+
+/* ============================================================
+   Cyber background
+   ============================================================ */
+(function cyber() {
+  const canvas = document.getElementById('cyber-bg');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const fontSize = 14;
+  let W, H, columns, drops;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    columns = Math.floor(W / fontSize);
+    drops = Array(columns).fill(1);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw() {
+    ctx.fillStyle = 'rgba(6,8,13,0.08)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = fontSize + 'px monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      const x = i * fontSize;
+      const y = drops[i] * fontSize;
+      const r = Math.random();
+      ctx.fillStyle = r > 0.7 ? '#0ff' : r > 0.4 ? '#0f8' : '#06c';
+      ctx.fillText(text, x, y);
+      if (y > H && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   Helpers & state
+   ============================================================ */
+function $(id) { return document.getElementById(id); }
+
+const state = {
+  balances: { MMK: 0, USDT: 0, BTC: 0, ETH: 0, BNB: 0, SOL: 0, XRP: 0, DOGE: 0, ADA: 0 },
+  orders: [],
+  history: [],
+  user: null,
+  marketPrices: {},   // current MMK price per coin
+  lastPrices: {},     // previous MMK price per coin (for animation)
+  marketSource: 'fallback'
+};
+
+function toast(msg) {
+  const t = $('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function () { t.classList.remove('show'); }, 2200);
+}
+
+function logHistory(msg) {
+  state.history.push({ t: new Date().toLocaleString(), msg: msg });
+  render();
+}
+
+function mockAddress(asset) {
+  return 'rxt-' + asset.toLowerCase() + '-' + Math.random().toString(36).slice(2, 10);
+}
+
+/* ============================================================
+   LIVE PRICES — Binance public spot API (CORS enabled, no key)
+   ============================================================ */
+async function fetchLivePrices() {
+  const symbols = MARKET_COINS
+    .filter(c => c !== 'USDT') // USDT is $1 by definition
+    .map(c => c + 'USDT');
+
+  try {
+    const url = 'https://api.binance.com/api/v3/ticker/24hr?symbols=' +
+      encodeURIComponent(JSON.stringify(symbols));
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    const prices = {};
+    data.forEach(function (item) {
+      const coin = item.symbol.replace('USDT', '');
+      prices[coin] = parseFloat(item.lastPrice) * USD_TO_MMK;
+    });
+    prices.USDT = USD_TO_MMK; // 1 USDT ≈ 1 USD
+
+    return { ok: true, prices: prices, source: 'live' };
+  } catch (err) {
+    const prices = {};
+    MARKET_COINS.forEach(function (c) { prices[c] = FALLBACK_MMK[c] || 0; });
+    return { ok: false, prices: prices, source: 'fallback', error: err.message };
+  }
+}
+
+/* ============================================================
+   Render Markets grid with up/down animation
+   ============================================================ */
+function renderMarkets(prices, source) {
+  const grid = $('marketGrid');
+  if (!grid) return;
+
+  grid.innerHTML = MARKET_COINS.map(function (coin) {
+    const price = prices[coin] || 0;
+    const prev = state.lastPrices[coin] || price;
+    let dir = '';
+    let changeTxt = '—';
+    let changeCls = 'flat';
+
+    if (prev && price !== prev) {
+      const pct = ((price - prev) / prev) * 100;
+      dir = price > prev ? 'up' : 'down';
+      changeCls = dir;
+      changeTxt = (pct > 0 ? '+' : '') + pct.toFixed(2) + '%';
+    }
+
+    return '<div class="market-card ' + dir + '">' +
+      '<div class="coin-name"><span class="coin-symbol">' + coin + '</span> ' + (COIN_NAMES[coin] || '') + '</div>' +
+      '<div class="coin-price">' + price.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' MMK</div>' +
+      '<div class="coin-change ' + changeCls + '">' + changeTxt + '</div>' +
+      '</div>';
+  }).join('');
+
+  const tag = source === 'live' ? '🟢 Live Binance Spot' : '🟡 Fallback (API unavailable)';
+  const updatedEl = $('marketsUpdated');
+  if (updatedEl) {
+    updatedEl.textContent = tag + ' · Updated ' + new Date().toLocaleTimeString();
+  }
+
+  MARKET_COINS.forEach(function (c) { state.lastPrices[c] = prices[c]; });
+}
+
+/* ============================================================
+   Update top ticker with animation
+   ============================================================ */
+function updateTicker(prices, source) {
+  const tag = source === 'live' ? '🟢 ' : '🟡 ';
+
+  TICKER_COINS.forEach(function (coin) {
+    const price = prices[coin] || 0;
+    const prev = state.lastPrices[coin] || price;
+    let dir = '';
+    if (prev && price > prev) dir = 'up';
+    else if (prev && price < prev) dir = 'down';
+
+    const txt = tag + price.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' MMK';
+    const changePct = prev ? ((price - prev) / prev * 100).toFixed(2) : '0.00';
+    const changeStr = (changePct > 0 ? '+' : '') + changePct + '%';
+
+    ['tk-' + coin.toLowerCase(), 'tk-' + coin.toLowerCase() + '2'].forEach(function (id) {
+      const el = $(id);
+      if (el) { el.textContent = txt; el.className = dir; }
+    });
+    ['chg-' + coin.toLowerCase(), 'chg-' + coin.toLowerCase() + '2'].forEach(function (id) {
+      const el = $(id);
+      if (el) { el.textContent = changeStr; el.className = dir; }
+    });
+  });
+}
+
+/* ============================================================
+   Refresh all (markets + ticker + trade panel if open)
+   ============================================================ */
+async function refreshAll() {
+  const result = await fetchLivePrices();
+  state.marketPrices = result.prices;
+  state.marketSource = result.source;
+
+  renderMarkets(result.prices, result.source);
+  updateTicker(result.prices, result.source);
+
+  if ($('trade') && $('trade').classList.contains('active')) {
+    updateTradePanel();
+  }
+}
+
+/* ============================================================
+   Trade panel (buy / sell rates from live prices + 2% spread)
+   ============================================================ */
+function updateTradePanel() {
+  const asset = $('asset').value;
+  const live = state.marketPrices[asset] || 0;
+  if (!live) return;
+
+  const buyPrice = live * 1.02;
+  const sellPrice = live * 0.98;
+
+  $('p2pBuy').textContent = buyPrice.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' MMK';
+  $('p2pSell').textContent = sellPrice.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' MMK';
+
+  const tag = state.marketSource === 'live' ? '🟢 Live Binance Spot (2% spread)' : '🟡 Fallback rate';
+  $('p2pMeta').textContent = tag;
+
+  const mmk = parseFloat($('amount').value) || 0;
+  const side = $('side').value;
+  if (mmk > 0) {
+    const rate = side === 'BUY' ? buyPrice : sellPrice;
+    const recv = side === 'BUY' ? (mmk / rate) : (mmk * rate);
+    $('receive').textContent = side === 'BUY'
+      ? recv.toFixed(6) + ' ' + asset
+      : recv.toLocaleString() + ' MMK';
+  }
+}
+
+/* ============================================================
+   Auth
+   ============================================================ */
+let isLoginMode = false;
+
+function showAuth() {
+  $('auth').classList.add('active');
+  $('mainApp').classList.add('hidden');
+}
+
+function enterApp(username) {
+  $('auth').classList.remove('active');
+  $('mainApp').classList.remove('hidden');
+  $('settingsUser').textContent = username;
+  document.querySelectorAll('#nav button').forEach(function (b) { b.classList.remove('active'); });
+  const tradeBtn = document.querySelector('#nav button[data-tab="trade"]');
+  if (tradeBtn) tradeBtn.classList.add('active');
+  document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+  $('trade').classList.add('active');
+  logHistory('Logged in as ' + username);
+  refreshAll();
+}
+
+/* ============================================================
+   DOMContentLoaded — bind every button
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* Auth switch */
+  $('authSwitch').addEventListener('click', function () {
+    isLoginMode = !isLoginMode;
+    $('authTitle').textContent = isLoginMode ? 'Log In' : 'Create Account';
+    $('authBtn').textContent = isLoginMode ? 'Log In' : 'Sign Up';
+    $('authSwitchText').textContent = isLoginMode ? "Don't have an account?" : 'Already have an account?';
+    $('authSwitch').textContent = isLoginMode ? 'Sign up' : 'Log in';
+  });
+
+  /* Auth submit */
+  $('authBtn').addEventListener('click', function () {
+    const user = $('authUser').value.trim();
+    const pass = $('authPass').value;
+    if (user.length < 3) { toast('Username must be ≥ 3 chars'); return; }
+    if (pass.length < 6) { toast('Password must be ≥ 6 chars'); return; }
+
+    const users = JSON.parse(localStorage.getItem('rxt_users') || '[]');
+
+    if (isLoginMode) {
+      const found = users.find(function (u) {
+        return u.username === user && u.password === pass;
+      });
+      if (!found) { toast('Wrong username or password'); return; }
+      state.user = user;
+      enterApp(user);
+    } else {
+      if (users.find(function (u) { return u.username === user; })) {
+        toast('Username already taken'); return;
+      }
+      users.push({ username: user, password: pass });
+      localStorage.setItem('rxt_users', JSON.stringify(users));
+      state.user = user;
+      enterApp(user);
+    }
+  });
+
+  /* Logout */
+  $('logoutBtn').addEventListener('click', function () {
+    state.user = null;
+    $('authUser').value = '';
+    $('authPass').value = '';
+    showAuth();
+    toast('Logged out');
+  });
+
+  /* Nav tabs */
+  $('nav').addEventListener('click', function (e) {
+    const btn = e.target.closest('button[data-tab]');
+    if (!btn) return;
+    document.querySelectorAll('#nav button').forEach(function (b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+    $(btn.dataset.tab).classList.add('active');
+
+    if (btn.dataset.tab === 'markets') refreshAll();
+    if (btn.dataset.tab === 'trade') updateTradePanel();
+  });
+
+  /* Settings buttons */
+  $('btn2fa').addEventListener('click', function () { toast('2FA coming soon'); });
+  $('btnKyc').addEventListener('click', function () { toast('KYC coming soon'); });
+
+  /* Trade: get live rates */
+  $('getRate').addEventListener('click', function () {
+    updateTradePanel();
+  });
+
+  /* Auto-refresh when asset or amount or side changes */
+  $('asset').addEventListener('change', updateTradePanel);
+  $('side').addEventListener('change', updateTradePanel);
+  $('amount').addEventListener('input', updateTradePanel);
+
+  /* Place order */
+  $('placeOrder').addEventListener('click', function () {
+    const asset = $('asset').value;
+    const side = $('side').value;
+    const mmk = parseFloat($('amount').value) || 0;
+
+    const buyPrice = parseFloat($('p2pBuy').textContent.replace(/[^\d.]/g, '')) || 0;
+    const sellPrice = parseFloat($('p2pSell').textContent.replace(/[^\d.]/g, '')) || 0;
+    const price = side === 'BUY' ? buyPrice : sellPrice;
+
+    if (mmk <= 0) { toast('Enter an amount'); return; }
+    if (!price) { toast('Wait for live rates'); return; }
+
+    const order = {
+      id: 'ORD' + Date.now().toString().slice(-6),
+      type: side, asset: asset, amount: mmk, price: price, status: 'Open'
+    };
+    state.orders.push(order);
+    logHistory('Order ' + order.id + ' — ' + side + ' ' + asset + ' @ ' + price + ' MMK');
+    toast('Order placed: ' + order.id);
+  });
+
+  /* Deposit */
+  $('depAsset').addEventListener('change', function (e) {
+    $('depAddr').textContent = mockAddress(e.target.value);
+  });
+  $('depAddr').textContent = mockAddress('MMK');
+
+  $('doDeposit').addEventListener('click', function () {
+    const asset = $('depAsset').value;
+    const amt = parseFloat($('depAmount').value) || 0;
+    if (amt <= 0) { toast('Enter amount'); return; }
+    state.balances[asset] = (state.balances[asset] || 0) + amt;
+    logHistory('Deposited ' + amt + ' ' + asset + ' (mock)');
+    toast('Deposited ' + amt + ' ' + asset);
+  });
+
+  /* Withdraw */
+  $('doWithdraw').addEventListener('click', function () {
+    const asset = $('wdAsset').value;
+    const amt = parseFloat($('wdAmount').value) || 0;
+    const addr = $('wdAddr').value.trim();
+    if (amt <= 0) { toast('Enter amount'); return; }
+    if (!addr) { toast('Enter address'); return; }
+    if ((state.balances[asset] || 0) < amt) { toast('Insufficient balance'); return; }
+    state.balances[asset] -= amt;
+    logHistory('Withdrew ' + amt + ' ' + asset + ' → ' + addr);
+    toast('Withdrawal requested');
+  });
+
+  /* Kick off */
+  render();
+  refreshAll();
+  setInterval(refreshAll, 15000);
+});
+
+/* ============================================================
+   Render wallet / orders / history
+   ============================================================ */
+function render() {
+  $('mmkBal').textContent = state.balances.MMK.toLocaleString();
+  $('usdtBal').textContent = state.balances.USDT;
+  $('btcBal').textContent = state.balances.BTC;
+  $('ethBal').textContent = state.balances.ETH;
+  $('bnbBal').textContent = state.balances.BNB;
+  $('solBal').textContent = state.balances.SOL;
+  $('xrpBal').textContent = state.balances.XRP;
+  $('dogeBal').textContent = state.balances.DOGE;
+  $('adaBal').textContent = state.balances.ADA;
+
+  const ob = $('ordersBody');
+  if (!state.orders.length) {
+    ob.innerHTML = '<tr><td colspan="6" class="label">No orders yet.</td></tr>';
+  } else {
+    ob.innerHTML = state.orders.map(function (o) {
+      return '<tr>' +
+        '<td>' + o.id + '</td>' +
+        '<td><span class="badge ' + o.type.toLowerCase() + '">' + o.type + '</span></td>' +
+        '<td>' + o.asset + '</td>' +
+        '<td>' + o.amount.toLocaleString() + '</td>' +
+        '<td>' + o.price.toLocaleString() + '</td>' +
+        '<td><span class="badge open">' + o.status + '</span></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  const hl = $('historyList');
+  if (!state.history.length) {
+    hl.innerHTML = '<li class="label">No transactions yet.</li>';
+  } else {
+    hl.innerHTML = state.history.slice().reverse().map(function (h) {
+      return '<li><small>' + h.t + '</small> — ' + h.msg + '</li>';
+    }).join('');
+  }
+}
+</script>
 </body>
 </html>
