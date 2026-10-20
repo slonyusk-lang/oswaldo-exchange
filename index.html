@@ -4,80 +4,29 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Rx T Exchange — MMK P2P</title>
-<style>
-  /* ---------- 基础暗色 + 赛博朋克 ---------- */
-  * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-  body { margin: 0; background: #06080d; color: #c8d6e5; overflow-x: hidden; }
-  canvas#cyber-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-  header { position: relative; z-index: 2; background: rgba(6,8,13,.85); backdrop-filter: blur(8px); border-bottom: 1px solid #1a2a3a; padding: .8rem 1rem; }
-  header h1 { margin: 0 0 .5rem; font-size: 1.2rem; color: #0ff; letter-spacing: 1px; text-shadow: 0 0 8px #0ff8; }
-  nav { display: flex; flex-wrap: wrap; gap: .3rem; }
-  nav button { background: #0a1220; color: #8ab; border: 1px solid #1a2a3a; padding: .35rem .7rem; border-radius: 4px; cursor: pointer; font-size: .85rem; transition: .2s; }
-  nav button.active { background: #0ff22; border-color: #0ff; color: #0ff; text-shadow: 0 0 6px #0ff8; }
-  main { position: relative; z-index: 2; max-width: 960px; margin: 1rem auto; padding: 0 1rem 4rem; }
-  .tab { display: none; }
-  .tab.active { display: block; }
-  h2 { font-size: 1.05rem; color: #0ff; border-left: 3px solid #0ff; padding-left: .6rem; margin: 0 0 .8rem; }
-  .card { background: rgba(10,18,32,.85); border: 1px solid #1a2a3a; padding: 1rem; border-radius: 8px; margin-bottom: .8rem; backdrop-filter: blur(4px); }
-  label { display: block; margin: .4rem 0; font-size: .85rem; color: #7a9ab5; }
-  input, select { width: 100%; padding: .55rem; font-size: .95rem; margin-top: .2rem; background: #06080d; border: 1px solid #1a2a3a; color: #c8d6e5; border-radius: 4px; }
-  input:focus, select:focus { outline: none; border-color: #0ff; box-shadow: 0 0 6px #0ff4; }
-  button.primary { background: #0ff22; color: #0ff; border: 1px solid #0ff; border-radius: 4px; padding: .6rem 1rem; font-size: .95rem; cursor: pointer; margin-top: .5rem; transition: .2s; width: 100%; }
-  button.primary:hover { background: #0ff44; box-shadow: 0 0 12px #0ff6; }
-  .row { display: flex; gap: .6rem; flex-wrap: wrap; }
-  .row > * { flex: 1; min-width: 140px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: .6rem; }
-  .bal { background: rgba(10,18,32,.9); padding: .7rem; border-radius: 6px; border: 1px solid #1a2a3a; }
-  .bal small { color: #5a7a95; display: block; font-size: .72rem; }
-  .bal b { font-size: 1.1rem; color: #0ff; }
-  .price { font-size: 1.5rem; font-weight: 700; color: #0f8; text-shadow: 0 0 8px #0f86; }
-  .label { color: #5a7a95; font-size: .8rem; }
-  code { background: #06080d; padding: .2rem .4rem; border-radius: 3px; font-size: .8rem; color: #0f8; word-break: break-all; border: 1px solid #1a2a3a; }
-  table { width: 100%; border-collapse: collapse; background: rgba(10,18,32,.85); border-radius: 6px; overflow: hidden; }
-  th, td { padding: .5rem .6rem; border-bottom: 1px solid #1a2a3a; text-align: left; font-size: .82rem; }
-  th { background: #0a1220; color: #5a7a95; font-weight: 500; }
-  ul#historyList { list-style: none; padding: 0; margin: 0; }
-  ul#historyList li { background: rgba(10,18,32,.85); margin-bottom: .3rem; padding: .5rem .7rem; border-radius: 4px; font-size: .82rem; border: 1px solid #1a2a3a; }
-  ul#historyList li small { color: #5a7a95; }
-  .toast { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); background: #0ff22; color: #0ff; border: 1px solid #0ff; padding: .6rem 1.2rem; border-radius: 6px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 99; font-size: .9rem; }
-  .toast.show { opacity: 1; }
-  .badge { display: inline-block; padding: .12rem .4rem; border-radius: 3px; font-size: .72rem; }
-  .badge.buy { background: #0f83; color: #0f8; }
-  .badge.sell { background: #f003; color: #f66; }
-  .badge.open { background: #fa03; color: #fb3; }
-  .error { color: #f66; font-size: .82rem; }
-  .auth-box { max-width: 400px; margin: 2rem auto; }
-  .auth-box h2 { text-align: center; border: 0; padding: 0; }
-  .link { color: #0ff; cursor: pointer; text-decoration: underline; font-size: .85rem; }
-  .hidden { display: none !important; }
-  /* 实时汇率滚动条 */
-  .ticker-wrap { position: relative; z-index: 2; background: #0a1220; border-bottom: 1px solid #1a2a3a; overflow: hidden; padding: .4rem 0; }
-  .ticker { display: flex; gap: 2rem; animation: scroll 30s linear infinite; white-space: nowrap; font-size: .8rem; color: #5a7a95; }
-  .ticker span b { color: #0f8; }
-  @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-</style>
+<link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
 <canvas id="cyber-bg"></canvas>
 
-<!-- 实时行情跑马灯 -->
 <div class="ticker-wrap">
   <div class="ticker" id="ticker">
-    <span>USDT/MMK <b id="tk-usdt">--</b></span>
-    <span>BTC/MMK <b id="tk-btc">--</b></span>
-    <span>ETH/MMK <b id="tk-eth">--</b></span>
-    <span>BNB/MMK <b id="tk-bnb">--</b></span>
-    <span>P2P Rate · Binance</span>
-    <span>USDT/MMK <b id="tk-usdt2">--</b></span>
-    <span>BTC/MMK <b id="tk-btc2">--</b></span>
-    <span>ETH/MMK <b id="tk-eth2">--</b></span>
-    <span>BNB/MMK <b id="tk-bnb2">--</b></span>
+    <span>USDT/MMK <b id="tk-usdt">loading…</b></span>
+    <span>BTC/MMK <b id="tk-btc">loading…</b></span>
+    <span>ETH/MMK <b id="tk-eth">loading…</b></span>
+    <span>BNB/MMK <b id="tk-bnb">loading…</b></span>
+    <span>Source: Binance P2P</span>
+    <span>USDT/MMK <b id="tk-usdt2">loading…</b></span>
+    <span>BTC/MMK <b id="tk-btc2">loading…</b></span>
+    <span>ETH/MMK <b id="tk-eth2">loading…</b></span>
+    <span>BNB/MMK <b id="tk-bnb2">loading…</b></span>
+    <span>Source: Binance P2P</span>
   </div>
 </div>
 
 <header>
-  <h1>⚡ Rx T Exchange <span style="font-size:.6rem;color:#5a7a95;">MMK P2P</span></h1>
+  <h1>⚡ Rx T Exchange <small>MMK P2P</small></h1>
   <nav id="nav">
     <button data-tab="trade" class="active">💱 Trade</button>
     <button data-tab="wallet">💼 Wallet</button>
@@ -91,381 +40,115 @@
 </header>
 
 <main>
-
-  <!-- ========== 登录/注册 ========== -->
   <section id="auth" class="tab active">
     <div class="auth-box card">
       <h2 id="authTitle">Create Account</h2>
-      <label>Username <input id="authUser" type="text" placeholder="e.g. aung_dev" /></label>
-      <label>Password <input id="authPass" type="password" placeholder="min 6 chars" /></label>
+      <label>Username <input id="authUser" type="text" placeholder="e.g. aung_dev"/></label>
+      <label>Password <input id="authPass" type="password" placeholder="min 6 chars"/></label>
       <button class="primary" id="authBtn">Sign Up</button>
-      <p style="text-align:center;margin-top:.8rem;font-size:.85rem;">
+      <p class="auth-switch">
         <span id="authSwitchText">Already have an account?</span>
         <span class="link" id="authSwitch">Log in</span>
       </p>
-      <p class="label" style="text-align:center;margin-top:.5rem;">⚠️ Demo only. Do not use real passwords.</p>
+      <p class="label center">⚠️ Demo only. Do not use real passwords.</p>
     </div>
   </section>
 
-  <!-- ========== 主界面（登录后显示） ========== -->
   <div id="mainApp" class="hidden">
+    <section id="trade" class="tab">
+      <h2>Trade</h2>
+      <div class="card">
+        <div class="row">
+          <label>Asset
+            <select id="asset"><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
+          </label>
+          <label>Side
+            <select id="side"><option value="BUY">Buy (Pay MMK)</option><option value="SELL">Sell (Receive MMK)</option></select>
+          </label>
+        </div>
+        <label>Amount (MMK) <input id="amount" type="number" min="0" placeholder="e.g. 100000"/></label>
+        <button class="primary" id="getRate">Get P2P Rate</button>
+        <div class="trade-result">
+          <p class="label">Best P2P Price (MMK)</p>
+          <div class="price" id="p2pPrice">—</div>
+          <p class="label" id="p2pMeta"></p>
+          <p>You receive: <b id="receive">—</b></p>
+          <button class="primary" id="placeOrder">Place Order</button>
+        </div>
+      </div>
+    </section>
 
-  <!-- TRADE -->
-  <section id="trade" class="tab">
-    <h2>Trade</h2>
-    <div class="card">
-      <div class="row">
+    <section id="wallet" class="tab">
+      <h2>Wallet</h2>
+      <div class="grid">
+        <div class="bal"><small>MMK</small><b id="mmkBal">0</b></div>
+        <div class="bal"><small>USDT</small><b id="usdtBal">0</b></div>
+        <div class="bal"><small>BTC</small><b id="btcBal">0</b></div>
+        <div class="bal"><small>ETH</small><b id="ethBal">0</b></div>
+        <div class="bal"><small>BNB</small><b id="bnbBal">0</b></div>
+      </div>
+    </section>
+
+    <section id="deposit" class="tab">
+      <h2>Deposit</h2>
+      <div class="card">
         <label>Asset
-          <select id="asset"><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
+          <select id="depAsset"><option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
         </label>
-        <label>Side
-          <select id="side"><option value="BUY">Buy (Pay MMK)</option><option value="SELL">Sell (Receive MMK)</option></select>
+        <p class="label">Deposit Address (Mock)</p>
+        <p><code id="depAddr">—</code></p>
+        <label>Amount <input id="depAmount" type="number" min="0"/></label>
+        <button class="primary" id="doDeposit">Confirm Deposit (Mock)</button>
+        <p class="label">⚠️ Demo only. Real deposits require a backend.</p>
+      </div>
+    </section>
+
+    <section id="withdraw" class="tab">
+      <h2>Withdraw</h2>
+      <div class="card">
+        <label>Asset
+          <select id="wdAsset"><option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
         </label>
+        <label>Amount <input id="wdAmount" type="number" min="0"/></label>
+        <label>Address <input id="wdAddr" type="text" placeholder="Destination address"/></label>
+        <p class="label">Fee: 1% (min 500 MMK equivalent)</p>
+        <button class="primary" id="doWithdraw">Request Withdrawal</button>
       </div>
-      <label>Amount (MMK) <input id="amount" type="number" min="0" placeholder="e.g. 100000"/></label>
-      <button class="primary" id="getRate">Get P2P Rate</button>
-      <div style="margin-top:.8rem; border-top:1px dashed #1a2a3a; padding-top:.8rem;">
-        <p class="label">Best P2P Price (MMK)</p>
-        <div class="price" id="p2pPrice">—</div>
-        <p class="label" id="p2pMeta"></p>
-        <p>You receive: <b id="receive" style="color:#0f8;">—</b></p>
-        <button class="primary" id="placeOrder">Place Order</button>
+    </section>
+
+    <section id="orders" class="tab">
+      <h2>Orders</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Type</th><th>Asset</th><th>Amount (MMK)</th><th>Price</th><th>Status</th></tr></thead>
+        <tbody id="ordersBody"><tr><td colspan="6" class="label">No orders yet.</td></tr></tbody>
+      </table>
+    </section>
+
+    <section id="history" class="tab">
+      <h2>Transaction History</h2>
+      <ul id="historyList"><li class="label">No transactions yet.</li></ul>
+    </section>
+
+    <section id="settings" class="tab">
+      <h2>Settings</h2>
+      <div class="card"><p>Username: <b id="settingsUser">—</b></p></div>
+      <div class="card"><p>2FA: <b>Disabled</b> <button class="ghost" onclick="toast('2FA coming soon')">Enable</button></p></div>
+      <div class="card"><p>KYC: <b>Not Verified</b> <button class="ghost" onclick="toast('KYC coming soon')">Start KYC</button></p></div>
+      <div class="card"><button class="danger" id="logoutBtn">Log Out</button></div>
+    </section>
+
+    <section id="support" class="tab">
+      <h2>Support</h2>
+      <div class="card">
+        <p>📧 support@rxt-exchange.example</p>
+        <p>💬 Telegram: @rxt_support</p>
+        <p class="label">Rates from Binance P2P (MMK). Refreshed every 60s.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- WALLET -->
-  <section id="wallet" class="tab">
-    <h2>Wallet</h2>
-    <div class="grid">
-      <div class="bal"><small>MMK</small><b id="mmkBal">0</b></div>
-      <div class="bal"><small>USDT</small><b id="usdtBal">0</b></div>
-      <div class="bal"><small>BTC</small><b id="btcBal">0</b></div>
-      <div class="bal"><small>ETH</small><b id="ethBal">0</b></div>
-      <div class="bal"><small>BNB</small><b id="bnbBal">0</b></div>
-    </div>
-  </section>
-
-  <!-- DEPOSIT -->
-  <section id="deposit" class="tab">
-    <h2>Deposit</h2>
-    <div class="card">
-      <label>Asset
-        <select id="depAsset"><option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
-      </label>
-      <p class="label">Deposit Address (Mock)</p>
-      <p><code id="depAddr">—</code></p>
-      <label>Amount <input id="depAmount" type="number" min="0"/></label>
-      <button class="primary" id="doDeposit">Confirm Deposit (Mock)</button>
-      <p class="label" style="margin-top:.6rem;">⚠️ Demo only. Real deposits require a backend + payment channel.</p>
-    </div>
-  </section>
-
-  <!-- WITHDRAW -->
-  <section id="withdraw" class="tab">
-    <h2>Withdraw</h2>
-    <div class="card">
-      <label>Asset
-        <select id="wdAsset"><option>MMK</option><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option></select>
-      </label>
-      <label>Amount <input id="wdAmount" type="number" min="0"/></label>
-      <label>Address <input id="wdAddr" type="text" placeholder="Destination address"/></label>
-      <p class="label">Fee: 1% (min 500 MMK equivalent)</p>
-      <button class="primary" id="doWithdraw">Request Withdrawal</button>
-    </div>
-  </section>
-
-  <!-- ORDERS -->
-  <section id="orders" class="tab">
-    <h2>Orders</h2>
-    <table>
-      <thead><tr><th>ID</th><th>Type</th><th>Asset</th><th>Amount (MMK)</th><th>Price</th><th>Status</th></tr></thead>
-      <tbody id="ordersBody"><tr><td colspan="6" class="label">No orders yet.</td></tr></tbody>
-    </table>
-  </section>
-
-  <!-- HISTORY -->
-  <section id="history" class="tab">
-    <h2>Transaction History</h2>
-    <ul id="historyList"><li class="label">No transactions yet.</li></ul>
-  </section>
-
-  <!-- SETTINGS -->
-  <section id="settings" class="tab">
-    <h2>Settings</h2>
-    <div class="card"><p>Username: <b id="settingsUser">—</b></p></div>
-    <div class="card"><p>2FA: <b>Disabled</b> <button class="primary" style="width:auto;display:inline;padding:.3rem .8rem;font-size:.8rem;" onclick="toast('2FA coming soon')">Enable</button></p></div>
-    <div class="card"><p>KYC: <b>Not Verified</b> <button class="primary" style="width:auto;display:inline;padding:.3rem .8rem;font-size:.8rem;" onclick="toast('KYC flow coming soon')">Start KYC</button></p></div>
-    <div class="card"><button class="primary" id="logoutBtn" style="background:#f003;border-color:#f66;color:#f66;">Log Out</button></div>
-  </section>
-
-  <!-- SUPPORT -->
-  <section id="support" class="tab">
-    <h2>Support</h2>
-    <div class="card">
-      <p>📧 Email: support@rxt-exchange.example</p>
-      <p>💬 Telegram: @rxt_support</p>
-      <p class="label">P2P rates from Binance P2P (MMK market). Refreshed on demand.</p>
-    </div>
-  </section>
-
-  </div><!-- /mainApp -->
+    </section>
+  </div>
 </main>
 
 <div class="toast" id="toast"></div>
-
-<script>
-/* ================================================================
-   PART 1: 赛博朋克背景 (Matrix rain + particles)
-   ================================================================ */
-(function() {
-  const canvas = document.getElementById('cyber-bg');
-  const ctx = canvas.getContext('2d');
-  let W, H;
-  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const fontSize = 14;
-  let columns, drops;
-
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    columns = Math.floor(W / fontSize);
-    drops = Array(columns).fill(1);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  function draw() {
-    ctx.fillStyle = 'rgba(6,8,13,0.08)';
-    ctx.fillRect(0, 0, W, H);
-    ctx.font = fontSize + 'px monospace';
-    for (let i = 0; i < drops.length; i++) {
-      const text = chars[Math.floor(Math.random() * chars.length)];
-      const x = i * fontSize;
-      const y = drops[i] * fontSize;
-      // 随机颜色：青 / 绿 / 蓝
-      const r = Math.random();
-      if (r > 0.7) ctx.fillStyle = '#0ff';
-      else if (r > 0.4) ctx.fillStyle = '#0f8';
-      else ctx.fillStyle = '#06c';
-      ctx.fillText(text, x, y);
-      if (y > H && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-
-/* ================================================================
-   PART 2: 状态 & 工具
-   ================================================================ */
-const $ = id => document.getElementById(id);
-const state = {
-  balances: { MMK: 0, USDT: 0, BTC: 0, ETH: 0, BNB: 0 },
-  orders: [],
-  history: [],
-  user: null
-};
-
-function toast(msg) {
-  const t = $('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2200);
-}
-function logHistory(msg) {
-  state.history.push({ t: new Date().toLocaleString(), msg });
-  render();
-}
-function mockAddress(asset) {
-  return 'rxt-' + asset.toLowerCase() + '-' + Math.random().toString(36).slice(2, 10);
-}
-
-/* ================================================================
-   PART 3: 登录 / 注册 (localStorage demo)
-   ================================================================ */
-let isLoginMode = false;
-
-$('authSwitch').onclick = () => {
-  isLoginMode = !isLoginMode;
-  $('authTitle').textContent = isLoginMode ? 'Log In' : 'Create Account';
-  $('authBtn').textContent = isLoginMode ? 'Log In' : 'Sign Up';
-  $('authSwitchText').textContent = isLoginMode ? "Don't have an account?" : 'Already have an account?';
-  $('authSwitch').textContent = isLoginMode ? 'Sign up' : 'Log in';
-};
-
-$('authBtn').onclick = () => {
-  const user = $('authUser').value.trim();
-  const pass = $('authPass').value;
-  if (user.length < 3) return toast('Username must be ≥ 3 chars');
-  if (pass.length < 6) return toast('Password must be ≥ 6 chars');
-
-  let users = JSON.parse(localStorage.getItem('rxt_users') || '[]');
-
-  if (isLoginMode) {
-    const found = users.find(u => u.username === user && u.password === pass);
-    if (!found) return toast('Wrong username or password');
-    state.user = user;
-    enterApp(user);
-  } else {
-    if (users.find(u => u.username === user)) return toast('Username already taken');
-    users.push({ username: user, password: pass });
-    localStorage.setItem('rxt_users', JSON.stringify(users));
-    state.user = user;
-    enterApp(user);
-  }
-};
-
-function enterApp(username) {
-  $('auth').classList.remove('active');
-  $('mainApp').classList.remove('hidden');
-  $('settingsUser').textContent = username;
-  // 激活 Trade tab
-  document.querySelectorAll('#nav button').forEach(b => b.classList.remove('active'));
-  document.querySelector('#nav button[data-tab="trade"]').classList.add('active');
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  $('trade').classList.add('active');
-  logHistory(`Logged in as ${username}`);
-  fetchAllTickers();
-}
-
-$('logoutBtn').onclick = () => {
-  state.user = null;
-  $('mainApp').classList.add('hidden');
-  $('auth').classList.add('active');
-  $('authUser').value = '';
-  $('authPass').value = '';
-  toast('Logged out');
-};
-
-// 自动登录（如果之前登录过）
-window.addEventListener('load', () => {
-  // 不自动登录，强制走 auth
-});
-
-/* ================================================================
-   PART 4: Tabs
-   ================================================================ */
-$('nav').addEventListener('click', e => {
-  const btn = e.target.closest('button[data-tab]');
-  if (!btn) return;
-  document.querySelectorAll('#nav button').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  $(btn.dataset.tab).classList.add('active');
-});
-
-/* ================================================================
-   PART 5: Binance P2P 汇率（使用第三方代理 API）
-   注意：直接 fetch binance.com 会被 CORS 拦截。
-   这里使用社区代理 SmartBinanceP2P (railway.app)，
-   它支持 MMK 吗？搜索结果只列出 BDT/INR/USD 等。
-   如果不支持 MMK，下面会 fallback 到模拟汇率。
-   ================================================================ */
-const P2P_PROXY = 'https://smartbinance-production.up.railway.app/api/v1/p2p';
-
-async function fetchP2P(asset, tradeType = 'BUY') {
-  // 尝试调用代理 API
-  try {
-    const url = `${P2P_PROXY}?asset=${asset}&pay_type=MMK&trade_type=${tradeType}&limit=1`;
-    const res = await fetch(url);
-    if (res.ok) {
-      const json = await res.json();
-      if (json.data && json.data.length) {
-        const ad = json.data[0];
-        return { price: parseFloat(ad.price || ad.adv?.price), nick: 'Binance P2P' };
-      }
-    }
-  } catch (e) { /* 忽略，走 fallback */ }
-
-  // Fallback：模拟汇率（仅演示用，不是实时 Binance 数据）
-  const fallback = { USDT: 4600, BTC: 320000000, ETH: 15000000, BNB: 2800000 };
-  return { price: fallback[asset] || 4600, nick: 'Simulated (proxy unavailable)' };
-}
-
-async function fetchAllTickers() {
-  for (const a of ['USDT', 'BTC', 'ETH', 'BNB']) {
-    try {
-      const r = await fetchP2P(a, 'BUY');
-      const el = $('tk-' + a.toLowerCase());
-      const el2 = $('tk-' + a.toLowerCase() + '2');
-      if (el) el.textContent = r.price.toLocaleString() + ' MMK';
-      if (el2) el2.textContent = r.price.toLocaleString() + ' MMK';
-    } catch (e) { /* ignore */ }
-  }
-}
-
-/* ================================================================
-   PART 6: Trade
-   ================================================================ */
-$('getRate').onclick = async () => {
-  const asset = $('asset').value;
-  const side = $('side').value;
-  $('p2pPrice').textContent = 'Loading…';
-  $('p2pMeta').textContent = '';
-  try {
-    const r = await fetchP2P(asset, side);
-    $('p2pPrice').textContent = r.price.toLocaleString() + ' MMK';
-    $('p2pMeta').textContent = `Source: ${r.nick}`;
-    const mmk = parseFloat($('amount').value) || 0;
-    if (mmk > 0) {
-      const recv = side === 'BUY' ? (mmk / r.price) : (mmk * r.price);
-      $('receive').textContent = side === 'BUY'
-        ? recv.toFixed(6) + ' ' + asset
-        : recv.toLocaleString() + ' MMK';
-    }
-  } catch (err) {
-    $('p2pPrice').textContent = '—';
-    $('p2pMeta').innerHTML = '<span class="error">' + err.message + '</span>';
-  }
-};
-
-$('placeOrder').onclick = () => {
-  const asset = $('asset').value;
-  const side = $('side').value;
-  const mmk = parseFloat($('amount').value) || 0;
-  const priceText = $('p2pPrice').textContent.replace(/[^\d.]/g, '');
-  const price = parseFloat(priceText) || 0;
-  if (mmk <= 0) return toast('Enter an amount');
-  if (!price) return toast('Fetch rate first');
-  const order = {
-    id: 'ORD' + Date.now().toString().slice(-6),
-    type: side, asset, amount: mmk, price, status: 'Open'
-  };
-  state.orders.push(order);
-  logHistory(`Order ${order.id} — ${side} ${asset} @ ${price} MMK`);
-  toast('Order placed: ' + order.id);
-};
-
-/* ================================================================
-   PART 7: Deposit / Withdraw
-   ================================================================ */
-$('depAsset').onchange = e => $('depAddr').textContent = mockAddress(e.target.value);
-$('depAddr').textContent = mockAddress('MMK');
-
-$('doDeposit').onclick = () => {
-  const asset = $('depAsset').value;
-  const amt = parseFloat($('depAmount').value) || 0;
-  if (amt <= 0) return toast('Enter amount');
-  state.balances[asset] = (state.balances[asset] || 0) + amt;
-  logHistory(`Deposited ${amt} ${asset} (mock)`);
-  toast(`Deposited ${amt} ${asset}`);
-};
-
-$('doWithdraw').onclick = () => {
-  const asset = $('wdAsset').value;
-  const amt = parseFloat($('wdAmount').value) || 0;
-  const addr = $('wdAddr').value.trim();
-  if (amt <= 0) return toast('Enter amount');
-  if (!addr) return toast('Enter address');
-  if ((state.balances[asset] || 0) < amt) return toast('Insufficient balance');
-  state.balances[asset] -= amt;
-  logHistory(`Withdrew ${amt} ${asset} → ${addr}`);
-  toast(`Withdrawal requested`);
-};
-
-/* ================================================================
-   PART 8: Render
-   ======================
+<script src="app.js"></script>
+</body>
+</html>
