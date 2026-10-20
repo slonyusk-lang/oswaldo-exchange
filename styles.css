@@ -1,4 +1,3 @@
-
 * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
 body { margin: 0; background: #06080d; color: #c8d6e5; overflow-x: hidden; }
 canvas#cyber-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
